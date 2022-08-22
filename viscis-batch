@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# This script processes samples for use with VISCIS and other things.
+#
+# DEPENDENCIES:
+# ffmpeg
+# flucoma-cli
+# ffsample-get (script using ffmpeg)
+#
+# EXPECTED FILE STRUCTURE: (SHOULD BE RUN IN "CORPUSNAME")
+#
+# "COPRUSNAME"/
+#  └── wav/(WAV FILES GO HERE)
+
+loudness_loop () {
+	ptr=1
+	count=`sed 's/[^,]//g; s/\n//g;' tslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
+	while [ "$ptr" -lt "$count" ]; do
+		echo "loudness of slice" "$ptr"
+		ind="$ptr"
+		sta=$(cat tslices/"$3"-ts.csv | cut -d, -f$ptr)
+		next=$(($ptr+1))
+		fin=$(cat tslices/"$3"-ts.csv | cut -d, -f$next)
+		del=$((fin-sta))
+		fluid-loudness -source "$1" -startframe "$sta" -numframes "$del" -features "$2"/"$3"-"$ind"-tmp.csv
+        	let "ptr+=1"
+	done ;
+	ptr=1
+	count=`sed 's/[^,]//g; s/\n//g;' tslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
+	while [ "$ptr" -lt "$count" ]; do
+		sed -i '2d;' "$2"/"$3"-"$ptr"-tmp.csv
+        	let "ptr+=1"
+	done
+	cat "$2"/"$3"-*-tmp.csv > "$2"/"$3"-loudness.csv ; rm -f $2/*-tmp.csv;
+}
+
+[ -d "tslices" ] &&
+	read -r -p 'This will delete the exsting analysis of this coprus. Do you want to continue? (y/n) ' choice
+    	case "$choice" in
+      		n|N) exit;;
+      		y|Y) echo 'Do your stuff here';;
+      		*) exit;;
+    	esac ;
+
+rm -rf tslices loudness layers p-loudness h-loudness
+mkdir -p tslices loudness layers layers/p layers/h p-loudness h-loudness
+
+fd -e wav -d 1 . 'wav/' > index.txt
+file="index.txt"
+
+while read line; do
+	name=$(echo ${line} | sed 's/wav\///; s/.wav//') ;
+	sample=$(ffsample-get ${line}) ;
+	cline=$(echo ${line})
+	echo "EVALUATING FILE: $name : frames = $sample" ; echo "creating transient slices"
+	fluid-transientslice -source "$cline" -indices tslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" tslices/"$name"-ts.csv ;
+	echo "creating harmonic and percussive layers"
+	fluid-hpss -source "$cline" -harmonic layers/h/"$name".wav -percussive layers/p/"$name".wav
+	echo "calculating loudness" ; loudness_loop "$cline" loudness "$name" ;
+	echo "calculating percussive loudness" ; loudness_loop layers/p/"$name".wav p-loudness "$name" ;
+	echo "calculating harmonic loudness" ; loudness_loop layers/h/"$name".wav h-loudness "$name" ;
+done < "${file}"
+rm -rf layers/
