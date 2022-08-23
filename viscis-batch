@@ -3,14 +3,29 @@
 # This script processes samples for use with VISCIS and other things.
 #
 # DEPENDENCIES:
+# fd
 # ffmpeg
 # flucoma-cli
 # ffsample-get (script using ffmpeg)
 #
-# EXPECTED FILE STRUCTURE: (SHOULD BE RUN IN "CORPUSNAME")
+#
+# EXPECTED FILE STRUCTURE:
 #
 # "COPRUSNAME"/
-#  └── wav/(WAV FILES GO HERE)
+#  └── wav/   <-(WAV FILES GO HERE)
+#
+#
+#
+# OUTPUT FILE STRUCTURE:
+#
+# "COPRUSNAME"/
+#  ├── h-loudness/  (loudness of slices of harmonic layer)
+#  ├── loudness/    (loudness of slices)
+#  ├── p-loudness/  (loudness of slices of percusive layer)
+#  ├── tslices/     (transient slices)
+#  └──  wav/         (audio files)
+
+
 
 loudness_loop () {
 	ptr=1
@@ -35,7 +50,7 @@ loudness_loop () {
 }
 
 [ -d "tslices" ] &&
-	read -r -p 'This will delete the exsting analysis of this coprus. Do you want to continue? (y/n) ' choice
+	read -r -p 'This will delete the exsting analysis of this corpus. Do you want to continue? (y/n) ' choice
     	case "$choice" in
       		n|N) exit;;
       		y|Y) echo 'Do your stuff here';;
@@ -60,4 +75,4 @@ while read line; do
 	echo "calculating percussive loudness" ; loudness_loop layers/p/"$name".wav p-loudness "$name" ;
 	echo "calculating harmonic loudness" ; loudness_loop layers/h/"$name".wav h-loudness "$name" ;
 done < "${file}"
-rm -rf layers/
+rm -rf indesx.txt layers/
