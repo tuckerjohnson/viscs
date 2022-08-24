@@ -1,7 +1,5 @@
 ## VISCS
 
-[early test video](https://drive.google.com/file/d/1FLa82oa9UL9wlkER7Yemn3MfVEGYMv64/view?usp=sharing)
-
 ## viscs-batch
 
 This script processes samples for use with VISCS.
