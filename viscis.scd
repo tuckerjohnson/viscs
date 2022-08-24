@@ -10,7 +10,7 @@ p = Array.new;
 ~mp = Bag.new;
 ~p = Bag.new;
 ~pp = Bag.new;
-~corpus = "/home/tuckerj/Library/test-corp/"
+~corpus = "/home/tuckerj/Library/small-test-corp/"
 ///////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -83,7 +83,6 @@ p = Array.new;
 			ini = i;
 			item.size.do({
 				arg i;
-				var norm;
 				total = item[i].asFloat + total;
 			});
 			avg = total / item.size;

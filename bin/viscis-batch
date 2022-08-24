@@ -9,11 +9,9 @@
 # ffsample-get (script using ffmpeg)
 #
 #
-# EXPECTED FILE STRUCTURE:
+# USE:
 #
-# "COPRUSNAME"/
-#  └── wav/   <-(WAV FILES GO HERE)
-#
+# viscis-batch [directory of wav files]
 #
 #
 # OUTPUT FILE STRUCTURE:
@@ -23,56 +21,51 @@
 #  ├── loudness/    (loudness of slices)
 #  ├── p-loudness/  (loudness of slices of percusive layer)
 #  ├── tslices/     (transient slices)
-#  └──  wav/         (audio files)
+#  └── wav/         (audio files)
 
-
+dir=$(readlink -f "$1")
 
 loudness_loop () {
 	ptr=1
 	count=`sed 's/[^,]//g; s/\n//g;' tslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
+	echo -n "  [slices:"
 	while [ "$ptr" -lt "$count" ]; do
-		echo "loudness of slice" "$ptr"
+		echo -n " $ptr"
 		ind="$ptr"
 		sta=$(cat tslices/"$3"-ts.csv | cut -d, -f$ptr)
 		next=$(($ptr+1))
 		fin=$(cat tslices/"$3"-ts.csv | cut -d, -f$next)
 		del=$((fin-sta))
-		fluid-loudness -source "$1" -startframe "$sta" -numframes "$del" -features "$2"/"$3"-"$ind"-tmp.csv
+		fluid-loudness -source "$1" -startframe "$sta" -numframes "$del" -features /tmp/"$2"-"$3"-"$ind".csv 2>&1 > /dev/null
+		sed -i '2d;' /tmp/"$2"-"$3"-"$ptr".csv
         	let "ptr+=1"
-	done ;
-	ptr=1
-	count=`sed 's/[^,]//g; s/\n//g;' tslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
-	while [ "$ptr" -lt "$count" ]; do
-		sed -i '2d;' "$2"/"$3"-"$ptr"-tmp.csv
-        	let "ptr+=1"
-	done
-	cat "$2"/"$3"-*-tmp.csv > "$2"/"$3"-loudness.csv ; rm -f $2/*-tmp.csv;
+	done ; echo "]" ; cat /tmp/"$2"-"$3"-*.csv > "$2"/"$3"-loudness.csv ; rm -f /tmp/"$2"-"$3"-*.csv
 }
 
-[ -d "tslices" ] &&
-	read -r -p 'This will delete the exsting analysis of this corpus. Do you want to continue? (y/n) ' choice
-    	case "$choice" in
-      		n|N) exit;;
-      		y|Y) echo 'Do your stuff here';;
-      		*) exit;;
-    	esac ;
+read -r -p "Process $1? (y/n) " choice
+case "$choice" in
+      	n|N) exit;;
+      	y|Y) echo 'begining analysis:';;
+      	*) exit;;
+esac ;
 
-rm -rf tslices loudness layers p-loudness h-loudness
-mkdir -p tslices loudness layers layers/p layers/h p-loudness h-loudness
+cd "$dir" ; mkdir wav ; mv *.wav wav/ && mkdir -p tslices loudness p-loudness h-loudness
 
-fd -e wav -d 1 . 'wav/' > index.txt
-file="index.txt"
+find . -name "*.wav" | sed 's/.\///' | sort -k 2 > /tmp/"$1"-viscis-index.txt
+file="/tmp/$1-viscis-index.txt"
 
 while read line; do
-	name=$(echo ${line} | sed 's/wav\///; s/.wav//') ;
-	sample=$(ffsample-get ${line}) ;
+	name=$(echo ${line} | sed 's/wav\///; s/.wav//')
+	sample=$(ffsample-get ${line})
 	cline=$(echo ${line})
 	echo "EVALUATING FILE: $name : frames = $sample" ; echo "creating transient slices"
-	fluid-transientslice -source "$cline" -indices tslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" tslices/"$name"-ts.csv ;
+	fluid-transientslice -source "$cline" -indices tslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" tslices/"$name"-ts.csv
 	echo "creating harmonic and percussive layers"
-	fluid-hpss -source "$cline" -harmonic layers/h/"$name".wav -percussive layers/p/"$name".wav
-	echo "calculating loudness" ; loudness_loop "$cline" loudness "$name" ;
-	echo "calculating percussive loudness" ; loudness_loop layers/p/"$name".wav p-loudness "$name" ;
-	echo "calculating harmonic loudness" ; loudness_loop layers/h/"$name".wav h-loudness "$name" ;
+	# fluid-hpss -source "$cline" -harmonic layers/h/"$name".wav -percussive layers/p/"$name".wav
+	echo "calculating loudness" ; loudness_loop "$cline" loudness "$name"
+	fluid-hpss -source "$cline" -harmonic /tmp/"$name"-tmp.wav &&
+		echo "calculating harmonic loudness" ; loudness_loop /tmp/"$name"-tmp.wav h-loudness "$name" ; rm -f /tmp/"$name"-tmp.wav
+	fluid-hpss -source "$cline" -percussive /tmp/"$name"-tmp.wav &&
+		echo "calculating percussive loudness" ; loudness_loop /tmp/"$name"-tmp.wav p-loudness "$name" ; rm -f /tmp/"$name"-tmp.wav
 done < "${file}"
-rm -rf indesx.txt layers/
+rm -f /tmp/"$1"-viscis-index.txt
