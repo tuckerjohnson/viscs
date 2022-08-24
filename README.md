@@ -1,8 +1,10 @@
-an instrument for organizing and filtering large sample sets
+## VISCS
 
-## viscis-batch
 
-This script processes samples for use with VISCIS and other things.
+
+## viscs-batch
+
+This script processes samples for use with VISCS.
 
 ##### DEPENDENCIES:
 
@@ -15,7 +17,7 @@ This script processes samples for use with VISCIS and other things.
 
 2. put all of the desired wav files into a directory and name it.
 
-3. run `viscis-batch [your directory of wav files]`
+3. run `viscs-batch [your directory of wav files]`
 
 
 #### OUTPUT FILE STRUCTURE:
@@ -28,5 +30,3 @@ This script processes samples for use with VISCIS and other things.
   ├── tslices/     (transient slices)
   └── wav/         (audio files)
 ```
-
-## viscis
