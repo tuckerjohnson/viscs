@@ -10,7 +10,7 @@ p = Array.new;
 ~mp = Bag.new;
 ~p = Bag.new;
 ~pp = Bag.new;
-~corpus = "/home/tuckerj/Library/small-test-corp/"
+~corpus = "/home/tuckerj/Library/test-corp-2/";
 ///////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ p = Array.new;
 ~csvload.play;
 ~averager.play;
 
-
+t[0][0].size
 
 l.do({
 	arg val, i;
@@ -122,11 +122,22 @@ l.do({
 });
 
 
+~bagkiller = r {
+	arg inval;
+	var newbag;
+	newbag = Array.new;
+	inval.postln;
+	newbag = newbag++inval.asArray;
+	newbag.postln;
+	~activebag = newbag;
+};
+
+
 ~bagfiller = r {
 	arg inval;
 	var thebag;
-	thebag = Array.new;
-	inval.asArray.postln;
+	inval.postln;
+	thebag = ~activebag;
 	thebag = thebag++inval.asArray;
 	thebag.postln;
 	~activebag = thebag;
@@ -134,7 +145,7 @@ l.do({
 
 s.boot;
 
-~audio.entries.do({
+PathName(~corpus++"wav/").entries.do({
 	arg path, i;
 	b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 });
@@ -180,16 +191,17 @@ w = r {
 	});
 };
 
-
+t.size
 
 z.reset.play;
 y.reset.play;
 w.reset.play;
 
 ~activebag.size;
-~bagfiller.reset.value(~pp.asArray);
-~bagfiller.reset.value(~p.asArray);
-~bagfiller.reset.value(~p.asArray,~mp.asArray);
-~bagfiller.reset.value(~mp.asArray);
-~bagfiller.reset.value(~mf.asArray);
-~bagfiller.reset.value(~f.asArray,~ff.asArray);
+~bagkiller.reset.value(~ff);
+~bagfiller.reset.value(~pp);
+~bagfiller.reset.value(~p);
+~bagfiller.reset.value(~mp);
+~bagfiller.reset.value(~mf);
+~bagfiller.reset.value(~f);
+~bagfiller.reset.value(~ff);

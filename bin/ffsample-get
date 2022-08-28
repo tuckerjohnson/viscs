@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# returns an aproximation of samples in a given wav file using ffprobe.
+
+trim=$(ffprobe -i "$1" 2>&1 | sed -n '/Duration/,$p')
+dur=$(echo "$trim" | sed '2d;' | sed 's/  Duration: //; s/, b.*//;' | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }')
+sam=$(echo "$trim" | sed '1d;' | sed 's/.*1), //; s/ Hz.*//;' )
+frames=$(echo $sam \* $dur | bc | sed 's/\.00//g; s/\.0//g;')
+frames=$(($frames-500))
+
+echo "$frames"
