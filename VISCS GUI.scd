@@ -1,0 +1,288 @@
+~viscs = NetAddr.new("192.168.0.100", 57120);
+~viscsmix = NetAddr.new("192.168.0.100", 57120);
+//
+//net addresses must be set prior to evaluation
+//
+//color/font
+~base03 = Color.fromHexString("#002b36");
+~base02 = Color.fromHexString("#073642");
+~base01 = Color.fromHexString("#586e75");
+~base00 = Color.fromHexString("#657b83");
+~base0 = Color.fromHexString("#839496");
+~base1 = Color.fromHexString("#83a1a1");
+~base2 = Color.fromHexString("#eee8d5");
+~base3 = Color.fromHexString("#fdf6e3");
+~font = Font("DejaVu Sans Mono", 16);
+~yellow = Color.fromHexString("#b58900");
+~red = Color.fromHexString("#cb4b16");
+~green = Color.fromHexString("#859900");
+~blue = Color.fromHexString("#268bd2");
+~cyan = Color.fromHexString("#2aa198");
+~orange = Color.fromHexString("#cb4b16");
+~magenta = Color.fromHexString("#d33682");
+w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
+		~base03
+	).alpha_(0.7);
+
+~window_init = r {
+	~gui_init.run;
+	~genstate.run;
+	~start_state.run;
+};
+
+~gui_init = r {
+	~karray = ["gra", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "da", "eq", "bac", "q", "w", "e", "r",
+		"y", "u", "i", "o", "p", "obr", "cbr", "bsl", "cpl", "a", "s", "d", "f", "h", "j", "k", "l", "sc", "ap",
+		"ret", "lsh", "z", "x", "c", "v", "n", "m", "com", "per", "fsl", "rsh", "lctl", "lalt", "ralt", "rctl"];
+	////line 1
+	~kgra = Button(w, Rect(15, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k1 = Button(w, Rect(95, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k2 = Button(w, Rect(175, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k3 = Button(w, Rect(255, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k4 = Button(w, Rect(335, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k5 = Button(w, Rect(415, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k6 = Button(w, Rect(495, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k7 = Button(w, Rect(575, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k8 = Button(w, Rect(655, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k9 = Button(w, Rect(735, 315, 65, 65)).font_(~font).canFocus_(false);
+	~k0 = Button(w, Rect(815, 315, 65, 65)).font_(~font).canFocus_(false);
+	~kda = Button(w, Rect(895, 315, 65, 65)).font_(~font).canFocus_(false);
+	~keq = Button(w, Rect(975, 315, 65, 65)).font_(~font).canFocus_(false);
+	~kbac = Button(w, Rect(1055, 315, 130, 65)).font_(~font).canFocus_(false);
+	////line2
+	~kq = Button(w, Rect(160, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kw = Button(w, Rect(240, 395, 65, 65)).font_(~font).canFocus_(false);
+	~ke = Button(w, Rect(320, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kr = Button(w, Rect(400, 395, 65, 65)).font_(~font).canFocus_(false);
+	~ky = Button(w, Rect(560, 395, 65, 65)).font_(~font).canFocus_(false);
+	~ku = Button(w, Rect(640, 395, 65, 65)).font_(~font).canFocus_(false);
+	~ki = Button(w, Rect(720, 395, 65, 65)).font_(~font).canFocus_(false);
+	~ko = Button(w, Rect(800, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kp = Button(w, Rect(880, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kobr = Button(w, Rect(960, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kcbr = Button(w, Rect(1040, 395, 65, 65)).font_(~font).canFocus_(false);
+	~kbsl = Button(w, Rect(1120, 395, 65, 65)).font_(~font).canFocus_(false);
+	////line3
+	~ka = Button(w, Rect(170, 475, 65, 65)).font_(~font).canFocus_(false);
+	~ks = Button(w, Rect(250, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kd = Button(w, Rect(330, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kf = Button(w, Rect(410, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kh = Button(w, Rect(570, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kj = Button(w, Rect(650, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kk = Button(w, Rect(730, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kl = Button(w, Rect(810, 475, 65, 65)).font_(~font).canFocus_(false);
+	~ksc = Button(w, Rect(890, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kap = Button(w, Rect(970, 475, 65, 65)).font_(~font).canFocus_(false);
+	~kret = Button(w, Rect(1050, 475, 135, 65)).font_(~font).canFocus_(false);
+	////line4
+	~klsh = Button(w, Rect(15, 555, 175, 65)).font_(~font).canFocus_(false);
+	~kz = Button(w, Rect(205, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kx = Button(w, Rect(285, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kc = Button(w, Rect(365, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kv = Button(w, Rect(445, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kn = Button(w, Rect(605, 555, 65, 65)).font_(~font).canFocus_(false);
+	~km = Button(w, Rect(685, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kcom = Button(w, Rect(765, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kper = Button(w, Rect(845, 555, 65, 65)).font_(~font).canFocus_(false);
+	~kfsl = Button(w, Rect(925, 555, 65, 65)).font_(~font).canFocus_(false);
+	~krsh = Button(w, Rect(1005, 555, 180, 65)).font_(~font).canFocus_(false);
+	////line5
+	~klctl = Button(w, Rect(15, 635, 160, 65)).font_(~font).canFocus_(false);
+	~klalt = Button(w, Rect(190, 635, 160, 65)).font_(~font).canFocus_(false);
+	~kralt = Button(w, Rect(765, 635, 100, 65)).font_(~font).canFocus_(false);
+	~krctl = Button(w, Rect(880, 635, 100, 65)).font_(~font).canFocus_(false);
+};
+/////////////////////////////////////////////
+~genstate = r {
+	~karray.do({
+		arg val;
+		var k, string;
+		k = "~k" ++ val;
+		string = val;
+		case
+		{ val == "lctl" } { string = "ctrl" }
+		{ val == "rctl" } { string = "ctrl" }
+		{ val == "lalt" } { string = "alt" }
+		{ val == "ralt" } { string = "alt" }
+		{ val == "com" } { string = "," }
+		{ val == "per" } { string = "." }
+		{ val == "fsl" } { string = "/" }
+		{ val == "rsh" } { string = "shift" }
+		{ val == "lsh" } { string = "shift" }
+		{ val == "sc" } { string = ";" }
+		{ val == "ap" } { string = "'" }
+		{ val == "ret" } { string = "return" }
+		{ val == "gra" } { string = "`" }
+		{ val == "da" } { string = "-" }
+		{ val == "eq" } { string = "=" }
+		{ val == "bac" } { string = "backspace" }
+		{ val == "obr" } { string = "[" }
+		{ val == "cbr" } { string = "]" }
+		{ val == "bsl" } { string = "\\\\" };
+		(k ++ ".states_([[\"" ++ string ++
+			"\", ~base0, ~base03] ,[\"" ++ string ++
+			"\", ~base3, ~orange], [\"" ++ string ++
+			"\", ~base3, ~yellow], [\"" ++ string ++
+			"\", ~base3, ~magenta], [\"" ++ string ++
+			"\", ~base3, ~green], [\"" ++ string ++
+			"\", ~base3, ~cyan]]);").interpret;
+	});
+};
+/////////////////////////////////////////////////////
+~startupgo = r {
+	160.do({
+		arg val;
+		case
+		{ val%(8) == 0 } { ~ka.value_(rrand(1,5)); ~kk.value_(0); }
+		{ val%(8) == 1 } { ~ks.value_(rrand(1,5)); ~kl.value_(0);  }
+		{ val%(8) == 2 } { ~kd.value_(rrand(1,5)); ~ka.value_(0);  }
+		{ val%(8) == 3 } { ~kf.value_(rrand(1,5)); ~ks.value_(0);  }
+		{ val%(8) == 4 } { ~kh.value_(rrand(1,5)); ~kd.value_(0);  }
+		{ val%(8) == 5 } { ~kj.value_(rrand(1,5)); ~kf.value_(0);  }
+		{ val%(8) == 6 } { ~kk.value_(rrand(1,5)); ~kh.value_(0);  }
+		{ val%(8) == 7 } { ~kl.value_(rrand(1,5)); ~kj.value_(0);  };
+		0.08.yield;
+	});
+	~kk.value_(0); ~kl.value_(0);
+};
+////////////////////////////////////////////////////////
+~start_state = r {
+	w.view.keyDownAction = {
+		|doc, char, mod, unicode, keycode, key|
+		case
+		{ keycode == 96 } { ~kgra.value_(3); AppClock.play(~startupgo); } //`
+		{ keycode == 49 } { ~k1.value_(4); } //1
+		{ keycode == 50 } { ~k2.value_(4); } //2
+		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 52 } { ~k4.value_(4); } //4
+		{ keycode == 53 } { ~k5.value_(4); } //5
+		{ keycode == 54 } { ~k6.value_(4); } //6
+		{ keycode == 55 } { ~k7.value_(4); } //7
+		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 57 } { ~k9.value_(4); } //9
+		{ keycode == 48 } { ~k0.value_(4); } //0
+		{ keycode == 45 } { ~kda.value_(4); } //-
+		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
+		{ keycode == 113 } { ~kq.value_(2); } //q
+		{ keycode == 119 } { ~kw.value_(2); } //w
+		{ keycode == 101 } { ~ke.value_(2); } //e
+		{ keycode == 114 } { ~kr.value_(2); } //r
+		{ keycode == 81 } { ~kq.value_(1); } //Q
+		{ keycode == 87 } { ~kw.value_(1); } //W
+		{ keycode == 69 } { ~ke.value_(1); } //E
+		{ keycode == 82 } { ~kr.value_(1); } //R
+		{ keycode == 121 } { ~ky.value_(5); } //y
+		{ keycode == 117 } { ~ku.value_(5); } //u
+		{ keycode == 105 } { ~ki.value_(5); } //i
+		{ keycode == 111 } { ~ko.value_(5); } //o
+		{ keycode == 112 } { ~kp.value_(5); } //p
+		{ keycode == 91 } { ~kobr.value_(5); } //[
+		{ keycode == 93 } { ~kcbr.value_(5); } //]
+		{ keycode == 92 } { ~kbsl.value_(1); } //\
+		{ keycode == 97 } { ~ka.value_(2); } //a
+		{ keycode == 115 } { ~ks.value_(2); } //s
+		{ keycode == 100 } { ~kd.value_(2); } //d
+		{ keycode == 102 } { ~kf.value_(2); } //f
+		{ keycode == 65 } { ~ka.value_(1); } //A
+		{ keycode == 83 } { ~ks.value_(1); } //S
+		{ keycode == 68 } { ~kd.value_(1); } //D
+		{ keycode == 70 } { ~kf.value_(1); } //F
+		{ keycode == 104 } { ~kh.value_(5); } //h
+		{ keycode == 106 } { ~kj.value_(5); } //j
+		{ keycode == 107 } { ~kk.value_(5); } //k
+		{ keycode == 108 } { ~kl.value_(5); } //l
+		{ keycode == 59 } { ~ksc.value_(5); } //;
+		{ keycode == 39 } { ~kap.value_(5); } //'
+		{ keycode == 65293 } { ~kret.value_(1); } //return
+		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
+		{ keycode == 122 } { ~kz.value_(2); } //z
+		{ keycode == 120 } { ~kx.value_(2); } //x
+		{ keycode == 99 } { ~kc.value_(2); } //c
+		{ keycode == 118 } { ~kv.value_(2); } //v
+		{ keycode == 90 } { ~kz.value_(1); } //Z
+		{ keycode == 88 } { ~kx.value_(1); } //X
+		{ keycode == 67 } { ~kc.value_(1); } //C
+		{ keycode == 86 } { ~kv.value_(1); } //V
+		{ keycode == 110 } { ~kn.value_(5); } //n
+		{ keycode == 109 } { ~km.value_(5); } //m
+		{ keycode == 44 } { ~kcom.value_(5); } //,
+		{ keycode == 46 } { ~kper.value_(5); } //.
+		{ keycode == 47 } { ~kfsl.value_(5); } ///
+		{ keycode == 65506 } { ~krsh.value_(3); } //rshift
+		{ keycode == 65507 } { ~klctl.value_(3); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(3); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(3); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(3); }; //rctl
+	};
+	w.view.keyUpAction = {
+		|doc, char, mod, unicode, keycode, key|
+		case
+		{ keycode == 96 } { ~kgra.value_(0); } //`
+		{ keycode == 49 } { ~k1.value_(0); } //1
+		{ keycode == 50 } { ~k2.value_(0); } //2
+		{ keycode == 51 } { ~k3.value_(0); } //3
+		{ keycode == 52 } { ~k4.value_(0); } //4
+		{ keycode == 53 } { ~k5.value_(0); } //5
+		{ keycode == 54 } { ~k6.value_(0); } //6
+		{ keycode == 55 } { ~k7.value_(0); } //7
+		{ keycode == 56 } { ~k8.value_(0); } //8
+		{ keycode == 57 } { ~k9.value_(0); } //9
+		{ keycode == 48 } { ~k0.value_(0); } //0
+		{ keycode == 45 } { ~kda.value_(0); } //-
+		{ keycode == 61 } { ~keq.value_(0); } //=
+		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
+		{ keycode == 113 } { ~kq.value_(0); } //q
+		{ keycode == 119 } { ~kw.value_(0); } //w
+		{ keycode == 101 } { ~ke.value_(0); } //e
+		{ keycode == 114 } { ~kr.value_(0); } //r
+		{ keycode == 81 } { ~kq.value_(0); } //Q
+		{ keycode == 87 } { ~kw.value_(0); } //W
+		{ keycode == 69 } { ~ke.value_(0); } //E
+		{ keycode == 82 } { ~kr.value_(0); } //R
+		{ keycode == 121 } { ~ky.value_(0); } //y
+		{ keycode == 117 } { ~ku.value_(0); } //u
+		{ keycode == 105 } { ~ki.value_(0); } //i
+		{ keycode == 111 } { ~ko.value_(0); } //o
+		{ keycode == 112 } { ~kp.value_(0); } //p
+		{ keycode == 91 } { ~kobr.value_(0); } //[
+		{ keycode == 93 } { ~kcbr.value_(0); } //]
+		{ keycode == 92 } { ~kbsl.value_(0); } //\
+		{ keycode == 97 } { ~ka.value_(0); } //a
+		{ keycode == 115 } { ~ks.value_(0); } //s
+		{ keycode == 100 } { ~kd.value_(0); } //d
+		{ keycode == 102 } { ~kf.value_(0); } //f
+		{ keycode == 65 } { ~ka.value_(0); } //A
+		{ keycode == 83 } { ~ks.value_(0); } //S
+		{ keycode == 68 } { ~kd.value_(0); } //D
+		{ keycode == 70 } { ~kf.value_(0); } //F
+		{ keycode == 104 } { ~kh.value_(0); } //h
+		{ keycode == 106 } { ~kj.value_(0); } //j
+		{ keycode == 107 } { ~kk.value_(0); } //k
+		{ keycode == 108 } { ~kl.value_(0); } //l
+		{ keycode == 59 } { ~ksc.value_(0); } //;
+		{ keycode == 39 } { ~kap.value_(0); } //'
+		{ keycode == 65293 } { ~kret.value_(0); } //return
+		{ keycode == 65505 } { ~klsh.value_(0); } //lsift
+		{ keycode == 122 } { ~kz.value_(0); } //z
+		{ keycode == 120 } { ~kx.value_(0); } //x
+		{ keycode == 99 } { ~kc.value_(0); } //c
+		{ keycode == 118 } { ~kv.value_(0); } //v
+		{ keycode == 90 } { ~kz.value_(0); } //Z
+		{ keycode == 88 } { ~kx.value_(0); } //X
+		{ keycode == 67 } { ~kc.value_(0); } //C
+		{ keycode == 86 } { ~kv.value_(0); } //V
+		{ keycode == 110 } { ~kn.value_(0); } //n
+		{ keycode == 109 } { ~km.value_(0); } //m
+		{ keycode == 44 } { ~kcom.value_(0); } //,
+		{ keycode == 46 } { ~kper.value_(0); } //.
+		{ keycode == 47 } { ~kfsl.value_(0); } ///
+		{ keycode == 65506 } { ~krsh.value_(0); } //rshift
+		{ keycode == 65507 } { ~klctl.value_(0); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(0); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(0); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(0); }; //rctl
+	};
+};
+///////////////////////////////////////////////////
+~window_init.reset.run;
