@@ -32,7 +32,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 
 ~gui_init = r {
 	~karray = ["gra", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "da", "eq", "bac", "q", "w", "e", "r",
-		"y", "u", "i", "o", "p", "obr", "cbr", "bsl", "cpl", "a", "s", "d", "f", "h", "j", "k", "l", "sc", "ap",
+		"y", "u", "i", "o", "p", "obr", "cbr", "bsl", "a", "s", "d", "f", "h", "j", "k", "l", "sc", "ap",
 		"ret", "lsh", "z", "x", "c", "v", "n", "m", "com", "per", "fsl", "rsh", "lctl", "lalt", "ralt", "rctl"];
 	////line 1
 	~kgra = Button(w, Rect(15, 315, 65, 65)).font_(~font).canFocus_(false);
@@ -98,6 +98,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		arg val;
 		var k, string;
 		k = "~k" ++ val;
+		k.postln;
 		string = val;
 		case
 		{ val == "lctl" } { string = "ctrl" }
