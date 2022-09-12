@@ -25,14 +25,14 @@
 
 loudness_loop () {
 	ptr=1
-	count=`sed 's/[^,]//g; s/\n//g;' tslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
+	count=`sed 's/[^,]//g; s/\n//g;' nslices/"$3"-ts.csv | wc -m`; let "COUNT+=1"
 	echo -n "  [slices:"
 	while [ "$ptr" -lt "$count" ]; do
 		echo -n " $ptr"
 		ind="$ptr"
-		sta=$(cat tslices/"$3"-ts.csv | cut -d, -f$ptr)
+		sta=$(cat nslices/"$3"-ts.csv | cut -d, -f$ptr)
 		next=$(($ptr+1))
-		fin=$(cat tslices/"$3"-ts.csv | cut -d, -f$next)
+		fin=$(cat nslices/"$3"-ts.csv | cut -d, -f$next)
 		del=$((fin-sta))
 		fluid-loudness -source "$1" -select loudness -startframe "$sta" -numframes "$del" -features /tmp/"$2"-"$3"-"$ind".csv 2>&1 > /dev/null
 		sed -i '2d;' /tmp/"$2"-"$3"-"$ptr".csv
@@ -48,7 +48,7 @@ case "$choice" in
 esac ;
 
 
-cd "$1" ; mkdir wav ; mv *.wav wav/ && mkdir -p tslices loudness p-loudness h-loudness
+cd "$1" ; mkdir wav ; mv *.wav wav/ && mkdir -p nslices loudness p-loudness h-loudness
 
 find . -name "*.wav" | sed 's/.\///' | sort -k 2 > /tmp/"$1"-viscis-index.txt
 file="/tmp/$1-viscis-index.txt"
@@ -57,8 +57,8 @@ while read line; do
 	name=$(echo "${line}" | sed 's/wav\///; s/.wav//')
 	sample=$(ffsample-get wav/"$name".wav)
 	cline=$(echo ${line})
-	echo "EVALUATING FILE: $name : frames = $sample" ; echo "creating transient slices"
-	fluid-transientslice -source "$cline" -indices tslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" tslices/"$name"-ts.csv
+	echo "EVALUATING FILE: $name : frames = $sample" ; echo "creating novelty slices"
+	fluid-noveltyslice -source "$cline" -indices nslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" nslices/"$name"-ts.csv
 	echo "calculating loudness" ; loudness_loop "$cline" loudness "$name"
 	echo "extracting harmonic layer" ; fluid-hpss -source "$cline" -harmonic /tmp/"$name"-tmp.wav &&
 		echo "calculating harmonic loudness" ; loudness_loop /tmp/"$name"-tmp.wav h-loudness "$name" ; rm -f /tmp/"$name"-tmp.wav

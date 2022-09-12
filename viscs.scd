@@ -1,4 +1,4 @@
-~corpus = "/home/tuckerj/Library/test-corp/";
+~corpus = "/home/tuckerj/Lib/smaller-corp/";
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -7,7 +7,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"p-loudness/").entries.do({ arg path; p = p.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"h-loudness/").entries.do({ arg path; h = h.add(CSVFileReader.read(path.fullPath)).asArray; });
-	PathName(~corpus++"tslices/").entries.do({ arg path; t = t.add(CSVFileReader.read(path.fullPath)).asArray; });
+	PathName(~corpus++"nslices/").entries.do({ arg path; t = t.add(CSVFileReader.read(path.fullPath)).asArray; });
 };
 ~averager = r {
 	l.do({ arg val, i; var outeri; outeri = i;
@@ -35,7 +35,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});
 	});
 };
-~l_indexer = r { var dex, cnt;
+~l_indexer = r { var dex, cnt, size;
 	cnt = 0; dex = Array.new;
 	l.do({ arg val, i; var outeri;
 		outeri = i;
@@ -62,30 +62,30 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 			});
 		});
 	});
-~sdex = ~sdex++dex;
+	~sdex = ~sdex++dex;
 };
 ~startup = r {
 	~csvload.play; ~averager.play; ~l_indexer.play;
 	~bagkiller = r { arg inval; var newbag;
 		newbag = Bag.new; inval.postln;
 		newbag = newbag++inval.asArray; newbag.postln;
-		~activebag = newbag;
+		~activebag = newbag.asBag;
 	};
 	~bagfiller = r { arg inval; var thebag;
 		inval.postln;
-		thebag = ~activebag;
+		thebag = ~activebag.asArray;
 		thebag = thebag++inval.asArray;
 		thebag.postln;
-		~activebag = thebag;
+		~activebag = thebag.asBag;
 	};
 	~bagcleaner = r { arg inval; var thebag;
 		inval.postln;
-		thebag = ~activebag;
+		thebag = ~activebag.asArray;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.size;
-		~activebag = thebag;
+		~activebag = thebag.asBag;
 	};
 	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var sig, ptr;
 		ptr = Line.ar(start, (end - 100), ((((end - 100) - start).abs)/BufSampleRate.kr(buf)), doneAction:2);
@@ -94,9 +94,14 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		Out.ar(out, sig.dup;);
 	}).add;
 	x = r { arg inval; var spos, epos; //handles creating new synths.
-		spos = t[inval[0]][0][inval[1]];
-		epos = t[inval[0]][0][inval[1] + 1]; (inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-		Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]).yield;
+		if( inval == nil,
+			{ "nilval".postln },
+			{
+				spos = t[inval[0]][0][inval[1]];
+				epos = t[inval[0]][0][inval[1] + 1];
+				(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
+				Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]).yield;
+		});
 	};
 		s.waitForBoot({
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
@@ -106,23 +111,27 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 
 	z = r {
 		40.rand.do({
-			x.reset.value(~sdex[~activebag.choose]);
+			var ind;
+			ind = ~activebag.choose;
+			x.reset.value(~sdex[ind]);
 			Array.fill(30, {arg i; (300.rand/6000)}).choose.wait;
 		});
 	};
 
 	y = r {
-		7.rand.do({
-			x.reset.value(~sdex[~activebag.choose]);
+		(7.rand+3).rand.do({
+			var ind;
+			ind = ~activebag.choose;
+			x.reset.value(~sdex[ind]);
 			Array.fill(30, {arg i; (300.rand/6000)}).choose.wait;
 		});
 	};
 
 	w = r {
 		(20.rand+20).do({
-			arg val;
-			val.post;
-			x.reset.value(~sdex[~activebag.choose]);
+			var ind;
+			ind = ~activebag.choose;
+			x.reset.value(~sdex[ind]);
 			Array.fill(30, {arg i; (300.rand/400)}).choose.wait;
 		});
 	};
@@ -131,6 +140,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 OSCdef.new(\viscs, {
 	arg msg;
 	case
+	{ msg[1] == 0 } { "viscs test".postln }
 	{ msg[1] == 1 } { ~startup.play }
 	{ msg[1] == 2 } { s.defaultGroup.freeAll }
 	{ msg[1] == 3 } { s.killAll }
@@ -140,8 +150,9 @@ OSCdef.new(\viscs, {
 OSCdef.new(\viscspl, {
 	arg msg;
 	case
+	{ msg[1] == 0 } { "viscspl test".postln }
 	{ msg[1] == 1 } { w.reset.play }
-	{ msg[1] == 2 } { y.reset.play }
+	{ msg[1] == 2 } { (y.reset.play) }
 	{ msg[1] == 3 } { z.reset.play }
 	};, '/play'
 );
@@ -149,6 +160,7 @@ OSCdef.new(\viscspl, {
 OSCdef.new(\viscsdyn, {
 	arg msg;
 	case
+	{ msg[1] == 0 } { "viscsdyn test".postln }
 	{ msg[1] == 1 } { ~bagfiller.reset.value(~d1) }
 	{ msg[1] == 2 } { ~bagfiller.reset.value(~d2) }
 	{ msg[1] == 3 } { ~bagfiller.reset.value(~d3) }
@@ -187,4 +199,3 @@ OSCdef.new(\viscsdyn, {
 	{ msg[1] == 36 } { ~bagcleaner.reset.value(~d12) }
 	};, '/dyn'
 );
-~activebag.size
