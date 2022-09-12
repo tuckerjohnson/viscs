@@ -127,7 +127,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});
 	};
 
-	w = r {
+	~w = r {
 		(20.rand+20).do({
 			var ind;
 			ind = ~activebag.choose;
@@ -151,8 +151,8 @@ OSCdef.new(\viscspl, {
 	arg msg;
 	case
 	{ msg[1] == 0 } { "viscspl test".postln }
-	{ msg[1] == 1 } { w.reset.play }
-	{ msg[1] == 2 } { (y.reset.play) }
+	{ msg[1] == 1 } { ~w.reset.play }
+	{ msg[1] == 2 } { y.reset.play }
 	{ msg[1] == 3 } { z.reset.play }
 	};, '/play'
 );
