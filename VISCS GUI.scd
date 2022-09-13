@@ -1,4 +1,4 @@
-~viscs = NetAddr.new("127.0.0.1", 57120);
+~viscs = NetAddr.new("192.168.1.40", 57120);
 ~viscsmix = NetAddr.new("192.168.0.100", 57120);
 //
 //net addresses must be set prior to evaluation
@@ -298,31 +298,51 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 };
 ///////////////////////////////////////////////////
 ~play_state = r {
+	~switches = [["~kq", "~kw", "~ke", "~kr", "~ka", "~ks", "~kd", "~kf", "~kz", "~kx", "~kc", "~kv"],
+		[9, 10, 11, 12, 5, 6, 7, 8, 1, 2, 3, 4], [33, 34, 35, 36, 29, 30, 31, 32, 25, 26, 27, 28]];
+	~switch = r {
+		arg inval;
+		if ( (~switches[0][inval] ++ ".value").interpret == 0,
+			{ (~switches[0][inval] ++ ".value_(2)").interpret; ~vdyn.reset.value(~switches[1][inval]); },
+			{ if ( (~switches[0][inval] ++ ".value").interpret == 2,
+				{ (~switches[0][inval] ++ ".value_(0)").interpret; ~vdyn.reset.value(~switches[2][inval]); },
+				{ (~switches[0][inval] ++ ".value_(0)").interpret }
+			)}
+		);
+	};
+	~offswitch = r {
+		arg inval;
+		~switches[0].do({
+			arg val;
+			(val ++ ".value_(0)").interpret;
+		});
+		(inval ++ ".value_(2)").interpret;
+	};
 	w.view.keyDownAction = {
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
-		{ keycode == 49 } { ~k1.value_(4); ~vcon.reset.value(0); } //1
-		{ keycode == 50 } { ~k2.value_(4); ~vcon.reset.value(0); } //2
-		{ keycode == 51 } { ~k3.value_(4); ~vcon.reset.value(0); } //3
-		{ keycode == 52 } { ~k4.value_(4); ~vcon.reset.value(0); } //4
-		{ keycode == 53 } { ~k5.value_(4); ~vcon.reset.value(0); } //5
-		{ keycode == 54 } { ~k6.value_(4); ~vcon.reset.value(0); } //6
-		{ keycode == 55 } { ~k7.value_(4); ~vcon.reset.value(0); } //7
-		{ keycode == 56 } { ~k8.value_(4); ~vcon.reset.value(0); } //8
-		{ keycode == 57 } { ~k9.value_(4); ~vcon.reset.value(0); } //9
-		{ keycode == 48 } { ~k0.value_(4); ~vcon.reset.value(0); } //0
-		{ keycode == 45 } { ~kda.value_(4);  ~vcon.reset.value(0); } //-
-		{ keycode == 61 } { ~keq.value_(4); ~vcon.reset.value(0); } //=
-		{ keycode == 65288 } { ~kbac.value_(3); ~vcon.reset.value(0); } //backspace
-		{ keycode == 113 } { ~kq.value_(2); ~vdyn.reset.value(9); } //q
-		{ keycode == 119 } { ~kw.value_(2); ~vdyn.reset.value(10); } //w
-		{ keycode == 101 } { ~ke.value_(2); ~vdyn.reset.value(11); } //e
-		{ keycode == 114 } { ~kr.value_(2); ~vdyn.reset.value(12); } //r
-		{ keycode == 81 } { ~kq.value_(1); ~vdyn.reset.value(21); } //Q
-		{ keycode == 87 } { ~kw.value_(1); ~vdyn.reset.value(22); }  //W
-		{ keycode == 69 } { ~ke.value_(1); ~vdyn.reset.value(23); }  //E
-		{ keycode == 82 } { ~kr.value_(1); ~vdyn.reset.value(24); }  //R
+		{ keycode == 49 } { ~k1.value_(4); } //1
+		{ keycode == 50 } { ~k2.value_(4); } //2
+		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 52 } { ~k4.value_(4); } //4
+		{ keycode == 53 } { ~k5.value_(4); } //5
+		{ keycode == 54 } { ~k6.value_(4); } //6
+		{ keycode == 55 } { ~k7.value_(4); } //7
+		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 57 } { ~k9.value_(4); } //9
+		{ keycode == 48 } { ~k0.value_(4); } //0
+		{ keycode == 45 } { ~kda.value_(4); } //-
+		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
+		{ keycode == 113 } { ~switch.reset.value(0);} //q
+		{ keycode == 119 } { ~switch.reset.value(1);} //w
+		{ keycode == 101 } { ~switch.reset.value(2);} //e
+		{ keycode == 114 } { ~switch.reset.value(3);} //r
+		{ keycode == 81 } { ~offswitch.reset.value("~kq"); ~vdyn.reset.value(21); } //Q
+		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vdyn.reset.value(22); }  //W
+		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vdyn.reset.value(23); }  //E
+		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vdyn.reset.value(24); }  //R
 		{ keycode == 121 } { ~ky.value_(5); } //y
 		{ keycode == 117 } { ~ku.value_(5); } //u
 		{ keycode == 105 } { ~ki.value_(5); } //i
@@ -331,14 +351,14 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 91 } { ~kobr.value_(5); } //[
 		{ keycode == 93 } { ~kcbr.value_(5); } //]
 		{ keycode == 92 } { ~kbsl.value_(1); } //\
-		{ keycode == 97 } { ~ka.value_(2); ~vdyn.reset.value(5); } //a
-		{ keycode == 115 } { ~ks.value_(2); ~vdyn.reset.value(6); } //s
-		{ keycode == 100 } { ~kd.value_(2); ~vdyn.reset.value(7); } //d
-		{ keycode == 102 } { ~kf.value_(2); ~vdyn.reset.value(8); } //f
-		{ keycode == 65 } { ~ka.value_(1); ~vdyn.reset.value(17); } //A
-		{ keycode == 83 } { ~ks.value_(1); ~vdyn.reset.value(18); } //S
-		{ keycode == 68 } { ~kd.value_(1); ~vdyn.reset.value(19); } //D
-		{ keycode == 70 } { ~kf.value_(1); ~vdyn.reset.value(20); } //F
+		{ keycode == 97 } { ~switch.reset.value(4);} //a
+		{ keycode == 115 } { ~switch.reset.value(5);} //s
+		{ keycode == 100 } { ~switch.reset.value(6);} //d
+		{ keycode == 102 } { ~switch.reset.value(7);} //f
+		{ keycode == 65 } { ~offswitch.reset.value("~ka"); ~vdyn.reset.value(17); } //A
+		{ keycode == 83 } { ~offswitch.reset.value("~ks"); ~vdyn.reset.value(18); } //S
+		{ keycode == 68 } { ~offswitch.reset.value("~kd"); ~vdyn.reset.value(19); } //D
+		{ keycode == 70 } { ~offswitch.reset.value("~kf"); ~vdyn.reset.value(20); } //F
 		{ keycode == 104 } { ~kh.value_(5); } //h
 		{ keycode == 106 } { ~kj.value_(5); ~vpl.reset.value(2); } //j
 		{ keycode == 107 } { ~kk.value_(5); ~vpl.reset.value(3); } //k
@@ -347,14 +367,14 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 39 } { ~kap.value_(5); } //'
 		{ keycode == 65293 } { ~kret.value_(1); } //return
 		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
-		{ keycode == 122 } { ~kz.value_(2); ~vdyn.reset.value(1); } //z
-		{ keycode == 120 } { ~kx.value_(2); ~vdyn.reset.value(2); } //x
-		{ keycode == 99 } { ~kc.value_(2); ~vdyn.reset.value(3); } //c
-		{ keycode == 118 } { ~kv.value_(2); ~vdyn.reset.value(4); } //v
-		{ keycode == 90 } { ~kz.value_(1); ~vdyn.reset.value(13); } //Z
-		{ keycode == 88 } { ~kx.value_(1); ~vdyn.reset.value(14); } //X
-		{ keycode == 67 } { ~kc.value_(1); ~vdyn.reset.value(15); } //C
-		{ keycode == 86 } { ~kv.value_(1); ~vdyn.reset.value(16); } //V
+		{ keycode == 122 } { ~switch.reset.value(8);} //z
+		{ keycode == 120 } { ~switch.reset.value(9);} //x
+		{ keycode == 99 } { ~switch.reset.value(10);} //c
+		{ keycode == 118 } { ~switch.reset.value(11);} //v
+		{ keycode == 90 } { ~offswitch.reset.value("~kz"); ~vdyn.reset.value(13); } //Z
+		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vdyn.reset.value(14); } //X
+		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vdyn.reset.value(15); } //C
+		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vdyn.reset.value(16); } //V
 		{ keycode == 110 } { ~kn.value_(5); } //n
 		{ keycode == 109 } { ~km.value_(5); } //m
 		{ keycode == 44 } { ~kcom.value_(5); } //,
@@ -370,27 +390,9 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
-		{ keycode == 49 } { ~k1.value_(0); } //1
-		{ keycode == 50 } { ~k2.value_(0); } //2
-		{ keycode == 51 } { ~k3.value_(0); } //3
-		{ keycode == 52 } { ~k4.value_(0); } //4
-		{ keycode == 53 } { ~k5.value_(0); } //5
-		{ keycode == 54 } { ~k6.value_(0); } //6
-		{ keycode == 55 } { ~k7.value_(0); } //7
-		{ keycode == 56 } { ~k8.value_(0); } //8
-		{ keycode == 57 } { ~k9.value_(0); } //9
-		{ keycode == 48 } { ~k0.value_(0); } //0
 		{ keycode == 45 } { ~kda.value_(0); } //-
 		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
-		{ keycode == 113 } { ~kq.value_(0); } //q
-		{ keycode == 119 } { ~kw.value_(0); } //w
-		{ keycode == 101 } { ~ke.value_(0); } //e
-		{ keycode == 114 } { ~kr.value_(0); } //r
-		{ keycode == 81 } { ~kq.value_(0); } //Q
-		{ keycode == 87 } { ~kw.value_(0); } //W
-		{ keycode == 69 } { ~ke.value_(0); } //E
-		{ keycode == 82 } { ~kr.value_(0); } //R
 		{ keycode == 121 } { ~ky.value_(0); } //y
 		{ keycode == 117 } { ~ku.value_(0); } //u
 		{ keycode == 105 } { ~ki.value_(0); } //i
@@ -399,14 +401,6 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 91 } { ~kobr.value_(0); } //[
 		{ keycode == 93 } { ~kcbr.value_(0); } //]
 		{ keycode == 92 } { ~kbsl.value_(0); } //\
-		{ keycode == 97 } { ~ka.value_(0); } //a
-		{ keycode == 115 } { ~ks.value_(0); } //s
-		{ keycode == 100 } { ~kd.value_(0); } //d
-		{ keycode == 102 } { ~kf.value_(0); } //f
-		{ keycode == 65 } { ~ka.value_(0); } //A
-		{ keycode == 83 } { ~ks.value_(0); } //S
-		{ keycode == 68 } { ~kd.value_(0); } //D
-		{ keycode == 70 } { ~kf.value_(0); } //F
 		{ keycode == 104 } { ~kh.value_(0); } //h
 		{ keycode == 106 } { ~kj.value_(0); } //j
 		{ keycode == 107 } { ~kk.value_(0); } //k
@@ -415,14 +409,6 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 39 } { ~kap.value_(0); } //'
 		{ keycode == 65293 } { ~kret.value_(0); } //return
 		{ keycode == 65505 } { ~klsh.value_(0); } //lsift
-		{ keycode == 122 } { ~kz.value_(0); } //z
-		{ keycode == 120 } { ~kx.value_(0); } //x
-		{ keycode == 99 } { ~kc.value_(0); } //c
-		{ keycode == 118 } { ~kv.value_(0); } //v
-		{ keycode == 90 } { ~kz.value_(0); } //Z
-		{ keycode == 88 } { ~kx.value_(0); } //X
-		{ keycode == 67 } { ~kc.value_(0); } //C
-		{ keycode == 86 } { ~kv.value_(0); } //V
 		{ keycode == 110 } { ~kn.value_(0); } //n
 		{ keycode == 109 } { ~km.value_(0); } //m
 		{ keycode == 44 } { ~kcom.value_(0); } //,
