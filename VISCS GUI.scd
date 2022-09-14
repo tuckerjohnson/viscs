@@ -146,7 +146,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ val%(8) == 7 } { ~kl.value_(rrand(1,5)); ~kj.value_(0);  };
 		0.08.yield;
 	});
-	~kk.value_(0); ~kl.value_(0); ~play_state.run;
+	~kk.value_(0); ~kl.value_(0); ~play_state.run; ~kgra.value_(0); ~k1.value_(4);
 };
 ~vcon = r { arg val;
 	~viscs.sendMsg("/con", val);
