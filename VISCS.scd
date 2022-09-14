@@ -93,49 +93,47 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		sig = sig * amp;
 		Out.ar(out, sig.dup;);
 	}).add;
-	x = r { arg inval; var spos, epos; //handles creating new synths.
+	x = { arg inval; var spos, epos; //handles creating new synths.
 		if( inval == nil,
 			{ "nilval".postln },
 			{
 				spos = t[inval[0]][0][inval[1]];
 				epos = t[inval[0]][0][inval[1] + 1];
 				(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-				Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]).yield;
+				Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
 		});
 	};
-		s.waitForBoot({
+	s.waitForBoot({
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
-	});
+	})
 
-	z = r {
-		40.rand.do({
+	~j = {
+		arg val;
+		("AppClock.play(r {"
+			++ val ++ ".do({
 			var ind;
-			ind = ~activebag.choose;
-			x.reset.value(~sdex[ind]);
-			Array.fill(30, {arg i; (300.rand/6000)}).choose.wait;
-		});
+			ind = ~activebag.choose;"
+			++ val ++ ".post;
+			x.value(~sdex[ind]);
+			Array.fill(30, {arg i; (300.rand/4000)}).choose.wait;
+			});
+		});").interpret
+	};
+	~n = {
+		arg val;
+		("AppClock.play(r {"
+			++ val ++ ".do({
+			var ind;
+			ind = ~activebag.choose;"
+			++ val ++ ".post;
+			x.value(~sdex[ind]);
+			Array.fill(30, {arg i; (300.rand/600)}).choose.wait;
+			});
+		});").interpret
 	};
 
-	y = r {
-		(7.rand+3).rand.do({
-			var ind;
-			ind = ~activebag.choose;
-			x.reset.value(~sdex[ind]);
-			Array.fill(30, {arg i; (300.rand/6000)}).choose.wait;
-		});
-	};
-
-	~w = r {
-		(20.rand+20).do({
-			var ind;
-			ind = ~activebag.choose;
-			x.reset.value(~sdex[ind]);
-			Array.fill(30, {arg i; (300.rand/400)}).choose.wait;
-		});
-	};
-};
 
 OSCdef.new(\viscs, {
 	arg msg;
@@ -151,13 +149,21 @@ OSCdef.new(\viscspl, {
 	arg msg;
 	case
 	{ msg[1] == 0 } { "viscspl test".postln }
-	{ msg[1] == 1 } { ~w.reset.play }
-	{ msg[1] == 2 } { y.reset.play }
-	{ msg[1] == 3 } { z.reset.play }
+	{ msg[1] == 1 } { ~j.value(1) }
+	{ msg[1] == 2 } { ~j.value(5+3.rand) }
+	{ msg[1] == 3 } { ~j.value(10+5.rand) }
+	{ msg[1] == 4 } { ~j.value(20+10.rand) }
+	{ msg[1] == 5 } { ~j.value(30+20.rand) }
+	{ msg[1] == 7 } { ~j.value(50+30.rand) }
+	{ msg[1] == 8 } { ~n.value(3) }
+	{ msg[1] == 9 } { ~n.value(5) }
+	{ msg[1] == 10 } { ~n.value(8) }
+	{ msg[1] == 11 } { ~n.value(13) }
+	{ msg[1] == 12 } { ~n.value(19) }
 	};, '/play'
 );
 
-OSCdef.new(\viscsdyn, {
+OSCdef.new(\viscssel, {
 	arg msg;
 	case
 	{ msg[1] == 0 } { "viscsdyn test".postln }
@@ -197,5 +203,5 @@ OSCdef.new(\viscsdyn, {
 	{ msg[1] == 34 } { ~bagcleaner.reset.value(~d10) }
 	{ msg[1] == 35 } { ~bagcleaner.reset.value(~d11) }
 	{ msg[1] == 36 } { ~bagcleaner.reset.value(~d12) }
-	};, '/dyn'
+	};, '/sel'
 );
