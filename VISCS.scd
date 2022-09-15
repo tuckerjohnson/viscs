@@ -3,6 +3,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
 ~d7 = Bag.new; ~d8 = Bag.new; ~d9 = Bag.new; ~d10 = Bag.new; ~d11 = Bag.new; ~d12 = Bag.new;
+~ph1 = Bag.new; ~ph2 = Bag.new; ~ph3 = Bag.new; ~ph4 = Bag.new; ~ph5 = Bag.new; ~ph6 = Bag.new;
+~ph7 = Bag.new; ~ph8 = Bag.new; ~ph9 = Bag.new; ~ph10 = Bag.new; ~ph11 = Bag.new; ~ph12 = Bag.new;
 ~csvload = r {
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"p-loudness/").entries.do({ arg path; p = p.add(CSVFileReader.read(path.fullPath)).asArray; });
@@ -44,7 +46,6 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 			item.size.do({ arg i;
 				dex = (dex++[[outeri, ini]]);
 				cnt = cnt + 1;
-				cnt.postln;
 				test = item[i][0].asFloat;
 				case
 				{ test.asFloat.inclusivelyBetween(-3.33, 10) }      { ~d1.add(cnt) }
@@ -64,8 +65,37 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	});
 	~sdex = ~sdex++dex;
 };
+~ph_avg = r { var cnt, mean, pmost, pleast, hmost, hleast;
+	mean = Array.new; pleast = 0; pmost = -100; hleast = 0; hmost = -100;
+	cnt = 0;
+	p.do({ arg val, i; var outeri;
+		outeri = i;
+		val.do({ arg item, i; var perc, harm, ini;
+			ini = i;
+			item.size.do({ arg i;
+				cnt = cnt + 1;
+				perc = item[i][0].asFloat;
+				harm = h[outeri][ini][0][0].asFloat;
+				mean = ((perc/harm)-1)*100;
+				mean.postln;
+			});
+		});
+	});
+	p.do({ arg val, i; var outeri;
+		outeri = i;
+		val.do({ arg item, i; var perc, harm, ini;
+			ini = i;
+			item.size.do({ arg i;
+				cnt = cnt + 1;
+
+			});
+		});
+	});
+};
+~ph_avg.play;
 ~startup = r {
 	~csvload.play; ~averager.play; ~l_indexer.play;
+	////////////////////////////////dyn bag
 	~bagkiller = r { arg inval; var newbag;
 		newbag = Bag.new; inval.postln;
 		newbag = newbag++inval.asArray; newbag.postln;
@@ -87,12 +117,16 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag.size;
 		~activebag = thebag.asBag;
 	};
+	/////////////////////////////////
+
+	/////////////////////////////////DEF
 	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var sig, ptr;
 		ptr = Line.ar(start, (end - 100), ((((end - 100) - start).abs)/BufSampleRate.kr(buf)), doneAction:2);
 		sig = BufRd.ar(1, buf, ptr);
 		sig = sig * amp;
 		Out.ar(out, sig.dup;);
 	}).add;
+	////////////////////////////////////////
 	x = { arg inval; var spos, epos; //handles creating new synths.
 		if( inval == nil,
 			{ "nilval".postln },
@@ -103,11 +137,12 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 				Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
 		});
 	};
+	////////////////////////////////////////////////////////////////
 	s.waitForBoot({
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
-	})
+	});
 
 	~j = {
 		arg val;
@@ -133,6 +168,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 			});
 		});").interpret
 	};
+};
 
 
 OSCdef.new(\viscs, {
