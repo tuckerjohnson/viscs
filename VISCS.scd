@@ -1,4 +1,4 @@
-~corpus = "/home/tuckerj/Lib/smaller-corp/";
+~corpus = "/run/media/ears/SAM-DRIVE/test-corp/";
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -15,25 +15,28 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	l.do({ arg val, i; var outeri; outeri = i;
 		val.do({ arg item, i; var total=0.0, avg, ini; ini = i;
 			item.size.do({ arg i;
-				total = item[i].asFloat + total;
+				total = item[i].asFloat.dbamp.squared + total;
 			});
-			avg = total / item.size; l[outeri][ini] = Array.with([avg])
+			avg = total / item.size;
+			l[outeri][ini] = Array.with([avg.sqrt.ampdb]);
 		});
 	});
 	p.do({ arg val, i; var outeri; outeri = i;
 		val.do({ arg item, i; var total=0.0, avg, ini; ini = i;
 			item.size.do({ arg i;
-				total = item[i].asFloat + total;
+				total = item[i].asFloat.dbamp.squared + total;
 			});
-			avg = total / item.size; p[outeri][ini] = Array.with([avg])
+			avg = total / item.size;
+			p[outeri][ini] = Array.with([avg.sqrt.ampdb]);
 		});
 	});
 	h.do({ arg val, i; var outeri; outeri = i;
 		val.do({ arg item, i; var total=0.0, avg, ini; ini = i;
 			item.size.do({ arg i;
-				total = item[i].asFloat + total;
+				total = item[i].asFloat.dbamp.squared + total;
 			});
-			avg = total / item.size; h[outeri][ini] = Array.with([avg])
+			avg = total / item.size;
+			h[outeri][ini] = Array.with([avg.sqrt.ampdb]);
 		});
 	});
 };
@@ -65,56 +68,55 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	});
 	~sdex = ~sdex++dex;
 };
-~ph_avg = r { var cnt, mean, pmost, pleast, hmost, hleast;
-	mean = Array.new; pleast = 0; pmost = -100; hleast = 0; hmost = -100;
-	cnt = 0;
-	p.do({ arg val, i; var outeri;
-		outeri = i;
-		val.do({ arg item, i; var perc, harm, ini;
-			ini = i;
-			item.size.do({ arg i;
-				cnt = cnt + 1;
-				perc = item[i][0].asFloat;
-				harm = h[outeri][ini][0][0].asFloat;
-				mean = ((perc/harm)-1)*100;
-				mean.postln;
-			});
-		});
-	});
-	p.do({ arg val, i; var outeri;
-		outeri = i;
-		val.do({ arg item, i; var perc, harm, ini;
-			ini = i;
-			item.size.do({ arg i;
-				cnt = cnt + 1;
-
-			});
-		});
-	});
-};
-~ph_avg.play;
+//~ph_avg = r { var cnt, mean, pmost, pleast, hmost, hleast;
+//	mean = Array.new; pleast = 0; pmost = -100; hleast = 0; hmost = -100;
+//	cnt = 0;
+//	p.do({ arg val, i; var outeri;
+//		outeri = i;
+//		val.do({ arg item, i; var perc, harm, ini;
+//			ini = i;
+//			item.size.do({ arg i;
+//				cnt = cnt + 1;
+//				perc = item[i][0].asFloat;
+//				harm = h[outeri][ini][0][0].asFloat;
+//				mean = ((perc/harm)-1)*100;
+//				mean.postln;
+//			});
+//		});
+//	});
+//	p.do({ arg val, i; var outeri;
+//		outeri = i;
+//		val.do({ arg item, i; var perc, harm, ini;
+//		ini = i;
+//			item.size.do({ arg i;
+//				cnt = cnt + 1;
+//
+//			});
+//		});
+//	});
+//};
+//~ph_avg.play;
 ~startup = r {
 	~csvload.play; ~averager.play; ~l_indexer.play;
 	////////////////////////////////dyn bag
 	~bagkiller = r { arg inval; var newbag;
-		newbag = Bag.new; inval.postln;
-		newbag = newbag++inval.asArray; newbag.postln;
+		newbag = Bag.new;
+		newbag = newbag++inval.asArray;
+		newbag.size.postln;
 		~activebag = newbag.asBag;
 	};
 	~bagfiller = r { arg inval; var thebag;
-		inval.postln;
 		thebag = ~activebag.asArray;
 		thebag = thebag++inval.asArray;
-		thebag.postln;
+		thebag.size.postln;
 		~activebag = thebag.asBag;
 	};
 	~bagcleaner = r { arg inval; var thebag;
-		inval.postln;
 		thebag = ~activebag.asArray;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
-		thebag.size;
+		thebag.size.postln;
 		~activebag = thebag.asBag;
 	};
 	/////////////////////////////////
@@ -133,9 +135,13 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 			{
 				spos = t[inval[0]][0][inval[1]];
 				epos = t[inval[0]][0][inval[1] + 1];
-				(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-				Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
-		});
+				if( spos.isNil.or(epos.isNil),
+					{ "nilval".postln },
+					{
+						(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
+						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
+				});
+				});
 	};
 	////////////////////////////////////////////////////////////////
 	s.waitForBoot({
@@ -143,7 +149,6 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
 	});
-
 	~j = {
 		arg val;
 		("AppClock.play(r {"
@@ -169,8 +174,6 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});").interpret
 	};
 };
-
-
 OSCdef.new(\viscs, {
 	arg msg;
 	case
