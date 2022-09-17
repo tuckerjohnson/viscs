@@ -5,6 +5,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~d7 = Bag.new; ~d8 = Bag.new; ~d9 = Bag.new; ~d10 = Bag.new; ~d11 = Bag.new; ~d12 = Bag.new;
 ~ph1 = Bag.new; ~ph2 = Bag.new; ~ph3 = Bag.new; ~ph4 = Bag.new; ~ph5 = Bag.new; ~ph6 = Bag.new;
 ~ph7 = Bag.new; ~ph8 = Bag.new; ~ph9 = Bag.new; ~ph10 = Bag.new; ~ph11 = Bag.new; ~ph12 = Bag.new;
+~le1 = Bag.new; ~le2 = Bag.new; ~le3 = Bag.new; ~le4 = Bag.new; ~le5 = Bag.new; ~le6 = Bag.new;
+~le7 = Bag.new; ~le8 = Bag.new; ~le9 = Bag.new; ~le10 = Bag.new; ~le11 = Bag.new; ~le12 = Bag.new;
 ////////////////////////////////////////////////////////
 ~csvload = r {
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
@@ -44,7 +46,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 };
 ////////////////////////////////////////////////////////
 ~l_indexer = r { var dex, cnt, size;
-	cnt = 0; dex = Array.new;
+	cnt = -1; dex = Array.new;
 	l.do({ arg val, i; var outeri;
 		outeri = i;
 		val.do({ arg item, i; var test, ini;
@@ -73,7 +75,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 };
 ////////////////////////////////////////////////////////
 ~ph_indexer = r { var cnt, test;
-	cnt = 0;
+	cnt = -1;
 	p.do({ arg val, i; var outeri;
 		outeri = i;
 		val.do({ arg item, i; var perc, harm, ini;
@@ -101,15 +103,40 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	});
 };
 ////////////////////////////////////////////////////////
-
-
+~length_indexer = r { var cnt, test;
+	cnt = -1;
+	t.do({ arg val, i;
+		val[0].do({ arg item, i;
+			if( i == 0, {
+				~nib = nil;
+			}, {
+				cnt = cnt + 1;
+				test = (item.asFloat-val[0][i-1].asFloat)/44100;
+				case
+				{ test.inclusivelyBetween(0, 0.1) } { ~le1.add(cnt) }
+				{ test.inclusivelyBetween(0.1, 0.2) } { ~le2.add(cnt) }
+				{ test.inclusivelyBetween(0.2, 0.4) } { ~le3.add(cnt) }
+				{ test.inclusivelyBetween(0.4, 0.7) } { ~le4.add(cnt) }
+				{ test.inclusivelyBetween(0.7, 1.2) } { ~le5.add(cnt) }
+				{ test.inclusivelyBetween(1.2, 2.0) } { ~le6.add(cnt) }
+				{ test.inclusivelyBetween(2.0, 3.3) } { ~le7.add(cnt) }
+				{ test.inclusivelyBetween(3.3, 5.4) } { ~le8.add(cnt) }
+				{ test.inclusivelyBetween(5.4, 8.8) } { ~le9.add(cnt) }
+				{ test.inclusivelyBetween(8.8, 14.3) } { ~le10.add(cnt) }
+				{ test.inclusivelyBetween(14.3, 23.4) } { ~le11.add(cnt) }
+				{ test.inclusivelyBetween(23.4, 300) } { ~le12.add(cnt) };
+			});
+		});
+	});
+};
 ////////////////////////////////////////////////////////
 ~startup = r {
-	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play;
+	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play; ~le_indexer.play;
 	////////////////////////////////bag check
 	~bagcheck = r { var thebag;
 		thebag = Set.new;
 		thebag = ~dynbag.asSet & ~phbag.asSet;
+		thebag = thebag & ~lebag.asSet;
 		thebag.size.postln;
 		~activebag = thebag.asBag;
 	};
@@ -154,6 +181,28 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		~phbag = thebag.asBag;
+		~bagcheck.reset.play;
+	};
+	/////////////////////////////////le bag
+	~le_bagkiller = r { arg inval; var newbag;
+		newbag = Bag.new;
+		newbag = newbag++inval.asArray;
+		~lebag = newbag.asBag;
+		~bagcheck.reset.play;
+	};
+	~le_bagfiller = r { arg inval; var thebag;
+		thebag = ~lebag.asArray;
+		thebag = thebag++inval.asArray;
+		~lebag = thebag.asBag;
+		~bagcheck.reset.play;
+	};
+	~le_bagcleaner = r { arg inval; var thebag;
+		thebag = ~lebag.asArray;
+		thebag.removeEvery(inval.asList);
+		thebag.removeEvery(inval.asList);
+		thebag.removeEvery(inval.asList);
+		thebag.removeEvery(inval.asList);
+		~lebag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
 	/////////////////////////////////DEF
@@ -281,7 +330,7 @@ OSCdef.new(\viscssel, {
 	{ msg[1] == 34 } { ~dyn_bagcleaner.reset.value(~d10) }
 	{ msg[1] == 35 } { ~dyn_bagcleaner.reset.value(~d11) }
 	{ msg[1] == 36 } { ~dyn_bagcleaner.reset.value(~d12) }
-	{ msg[1] == 37 } { ~ph_bagfiller.reset.value(~oh1) }
+	{ msg[1] == 37 } { ~ph_bagfiller.reset.value(~ph1) }
 	{ msg[1] == 38 } { ~ph_bagfiller.reset.value(~ph2) }
 	{ msg[1] == 39 } { ~ph_bagfiller.reset.value(~ph3) }
 	{ msg[1] == 40 } { ~ph_bagfiller.reset.value(~ph4) }
@@ -317,5 +366,41 @@ OSCdef.new(\viscssel, {
 	{ msg[1] == 70 } { ~ph_bagcleaner.reset.value(~ph10) }
 	{ msg[1] == 71 } { ~ph_bagcleaner.reset.value(~ph11) }
 	{ msg[1] == 72 } { ~ph_bagcleaner.reset.value(~ph12) }
+	{ msg[1] == 73 } { ~le_bagfiller.reset.value(~le1) }
+	{ msg[1] == 74 } { ~le_bagfiller.reset.value(~le2) }
+	{ msg[1] == 75 } { ~le_bagfiller.reset.value(~le3) }
+	{ msg[1] == 76 } { ~le_bagfiller.reset.value(~le4) }
+	{ msg[1] == 77 } { ~le_bagfiller.reset.value(~le5) }
+	{ msg[1] == 78 } { ~le_bagfiller.reset.value(~le6) }
+	{ msg[1] == 79 } { ~le_bagfiller.reset.value(~le7) }
+	{ msg[1] == 80 } { ~le_bagfiller.reset.value(~le8) }
+	{ msg[1] == 81 } { ~le_bagfiller.reset.value(~le9) }
+	{ msg[1] == 82 } { ~le_bagfiller.reset.value(~le10) }
+	{ msg[1] == 83 } { ~le_bagfiller.reset.value(~le11) }
+	{ msg[1] == 84 } { ~le_bagfiller.reset.value(~le12) }
+	{ msg[1] == 85 } { ~le_bagkiller.reset.value(~le1) }
+	{ msg[1] == 86 } { ~le_bagkiller.reset.value(~le2) }
+	{ msg[1] == 87 } { ~le_bagkiller.reset.value(~le3) }
+	{ msg[1] == 88 } { ~le_bagkiller.reset.value(~le4) }
+	{ msg[1] == 89 } { ~le_bagkiller.reset.value(~le5) }
+	{ msg[1] == 90 } { ~le_bagkiller.reset.value(~le6) }
+	{ msg[1] == 91 } { ~le_bagkiller.reset.value(~le7) }
+	{ msg[1] == 92 } { ~le_bagkiller.reset.value(~le8) }
+	{ msg[1] == 93 } { ~le_bagkiller.reset.value(~le9) }
+	{ msg[1] == 94 } { ~le_bagkiller.reset.value(~le10) }
+	{ msg[1] == 95 } { ~le_bagkiller.reset.value(~le11) }
+	{ msg[1] == 96 } { ~le_bagkiller.reset.value(~le12) }
+	{ msg[1] == 97 } { ~le_bagcleaner.reset.value(~le1) }
+	{ msg[1] == 98 } { ~le_bagcleaner.reset.value(~le2) }
+	{ msg[1] == 99 } { ~le_bagcleaner.reset.value(~le3) }
+	{ msg[1] == 100 } { ~le_bagcleaner.reset.value(~le4) }
+	{ msg[1] == 101 } { ~le_bagcleaner.reset.value(~le5) }
+	{ msg[1] == 102 } { ~le_bagcleaner.reset.value(~le6) }
+	{ msg[1] == 103 } { ~le_bagcleaner.reset.value(~le7) }
+	{ msg[1] == 104 } { ~le_bagcleaner.reset.value(~le8) }
+	{ msg[1] == 105 } { ~le_bagcleaner.reset.value(~le9) }
+	{ msg[1] == 106 } { ~le_bagcleaner.reset.value(~le10) }
+	{ msg[1] == 107 } { ~le_bagcleaner.reset.value(~le11) }
+	{ msg[1] == 108 } { ~le_bagcleaner.reset.value(~le12) }
 	};, '/sel'
 );

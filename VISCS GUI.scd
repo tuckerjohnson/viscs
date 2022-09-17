@@ -334,7 +334,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		case
 		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
 		{ keycode == 50 } { ~k2.value_(4); ~k1.value_(0); ~dyn_state_store.reset.run; ~ph_state.reset.run; } //2
-		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 51 } { ~k3.value_(4); ~k1.value_(0); ~dyn_state_store.reset.run; ~le_state.reset.run; } //3
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
 		{ keycode == 54 } { ~k6.value_(4); } //6
@@ -468,7 +468,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		case
 		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
 		{ keycode == 49 } { ~k1.value_(4); ~k2.value_(0);  ~ph_state_store.reset.run; ~dyn_state.reset.run; } //1
-		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 51 } { ~k3.value_(4); ~k2.value_(0);  ~ph_state_store.reset.run; ~le_state.reset.run; } //3
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
 		{ keycode == 54 } { ~k6.value_(4); } //6
@@ -519,6 +519,140 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vsel.reset.value(51); } //X
 		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vsel.reset.value(50); } //C
 		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vsel.reset.value(49); } //V
+		{ keycode == 110 } { ~kn.value_(5); ~vpl.reset.value(7); } //n
+		{ keycode == 109 } { ~km.value_(5); ~vpl.reset.value(8); } //m
+		{ keycode == 44 } { ~kcom.value_(5); ~vpl.reset.value(9); } //,
+		{ keycode == 46 } { ~kper.value_(5); ~vpl.reset.value(10); } //.
+		{ keycode == 47 } { ~kfsl.value_(5); ~vpl.reset.value(11); } ///
+		{ keycode == 65506 } { ~krsh.value_(3); } //rshift
+		{ keycode == 65507 } { ~klctl.value_(3); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(3); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(3); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(3); }; //rctl
+	};
+	w.view.keyUpAction = {
+		|doc, char, mod, unicode, keycode, key|
+		case
+		{ keycode == 96 } { ~kgra.value_(0); } //`
+		{ keycode == 45 } { ~kda.value_(0); } //-
+		{ keycode == 61 } { ~keq.value_(0); } //=
+		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
+		{ keycode == 121 } { ~ky.value_(0); } //y
+		{ keycode == 117 } { ~ku.value_(0); } //u
+		{ keycode == 105 } { ~ki.value_(0); } //i
+		{ keycode == 111 } { ~ko.value_(0); } //o
+		{ keycode == 112 } { ~kp.value_(0); } //p
+		{ keycode == 91 } { ~kobr.value_(0); } //[
+		{ keycode == 93 } { ~kcbr.value_(0); } //]
+		{ keycode == 92 } { ~kbsl.value_(0); } //\
+		{ keycode == 104 } { ~kh.value_(0); } //h
+		{ keycode == 106 } { ~kj.value_(0); } //j
+		{ keycode == 107 } { ~kk.value_(0); } //k
+		{ keycode == 108 } { ~kl.value_(0); } //l
+		{ keycode == 59 } { ~ksc.value_(0); } //;
+		{ keycode == 39 } { ~kap.value_(0); } //'
+		{ keycode == 65293 } { ~kret.value_(0); } //return
+		{ keycode == 65505 } { ~klsh.value_(0); } //lsift
+		{ keycode == 110 } { ~kn.value_(0); } //n
+		{ keycode == 109 } { ~km.value_(0); } //m
+		{ keycode == 44 } { ~kcom.value_(0); } //,
+		{ keycode == 46 } { ~kper.value_(0); } //.
+		{ keycode == 47 } { ~kfsl.value_(0); } ///
+		{ keycode == 65506 } { ~krsh.value_(0); } //rshift
+		{ keycode == 65507 } { ~klctl.value_(0); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(0); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(0); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(0); }; //rctl
+	};
+};
+/////////////////////////////////////////////////////////////////
+~le_switches = [0,0,0,0,0,0,0,0,0,0,0,0];
+~le_state = r {
+	~switches[0].do({
+		arg val, i;
+		(val ++ ".value_(~le_switches[" ++ i ++ "])").interpret;
+	});
+	~switches = [["~kq", "~kw", "~ke", "~kr", "~ka", "~ks", "~kd", "~kf", "~kz", "~kx", "~kc", "~kv"],
+		[84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73], [108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97]];
+	~switch = r {
+		arg inval;
+		if ( (~switches[0][inval] ++ ".value").interpret == 0,
+			{ (~switches[0][inval] ++ ".value_(2)").interpret; ~vsel.reset.value(~switches[1][inval]); },
+			{ if ( (~switches[0][inval] ++ ".value").interpret == 2,
+				{ (~switches[0][inval] ++ ".value_(0)").interpret; ~vsel.reset.value(~switches[2][inval]); },
+				{ (~switches[0][inval] ++ ".value_(0)").interpret }
+			)}
+		);
+	};
+	~offswitch = r {
+		arg inval;
+		~switches[0].do({
+			arg val;
+			(val ++ ".value_(0)").interpret;
+		});
+		(inval ++ ".value_(2)").interpret;
+	};
+	~le_state_store = r {
+		~le_switches = [~kq.value, ~kw.value, ~ke.value, ~kr.value,
+			~ka.value, ~ks.value, ~kd.value, ~kf.value,
+			~kz.value, ~kx.value, ~kc.value, ~kv.value];
+	};
+	w.view.keyDownAction = {
+		|doc, char, mod, unicode, keycode, key|
+		case
+		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
+		{ keycode == 49 } { ~k1.value_(4); ~k2.value_(0);  ~ph_state_store.reset.run; ~dyn_state.reset.run; } //1
+		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 52 } { ~k4.value_(4); } //4
+		{ keycode == 53 } { ~k5.value_(4); } //5
+		{ keycode == 54 } { ~k6.value_(4); } //6
+		{ keycode == 55 } { ~k7.value_(4); } //7
+		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 57 } { ~k9.value_(4); } //9
+		{ keycode == 48 } { ~k0.value_(4); } //0
+		{ keycode == 45 } { ~kda.value_(4); } //-
+		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
+		{ keycode == 113 } { ~switch.reset.value(0);} //q
+		{ keycode == 119 } { ~switch.reset.value(1);} //w
+		{ keycode == 101 } { ~switch.reset.value(2);} //e
+		{ keycode == 114 } { ~switch.reset.value(3);} //r
+		{ keycode == 81 } { ~offswitch.reset.value("~kq"); ~vsel.reset.value(96); } //Q
+		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(95); }  //W
+		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(94); }  //E
+		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(93); }  //R
+		{ keycode == 121 } { ~ky.value_(5); } //y
+		{ keycode == 117 } { ~ku.value_(5); } //u
+		{ keycode == 105 } { ~ki.value_(5); } //i
+		{ keycode == 111 } { ~ko.value_(5); } //o
+		{ keycode == 112 } { ~kp.value_(5); } //p
+		{ keycode == 91 } { ~kobr.value_(5); } //[
+		{ keycode == 93 } { ~kcbr.value_(5); } //]
+		{ keycode == 92 } { ~kbsl.value_(1); } //\
+		{ keycode == 97 } { ~switch.reset.value(4);} //a
+		{ keycode == 115 } { ~switch.reset.value(5);} //s
+		{ keycode == 100 } { ~switch.reset.value(6);} //d
+		{ keycode == 102 } { ~switch.reset.value(7);} //f
+		{ keycode == 65 } { ~offswitch.reset.value("~ka"); ~vsel.reset.value(92); } //A
+		{ keycode == 83 } { ~offswitch.reset.value("~ks"); ~vsel.reset.value(91); } //S
+		{ keycode == 68 } { ~offswitch.reset.value("~kd"); ~vsel.reset.value(90); } //D
+		{ keycode == 70 } { ~offswitch.reset.value("~kf"); ~vsel.reset.value(89); } //F
+		{ keycode == 104 } { ~kh.value_(5); ~vpl.reset.value(1);  } //h
+		{ keycode == 106 } { ~kj.value_(5); ~vpl.reset.value(2); } //j
+		{ keycode == 107 } { ~kk.value_(5); ~vpl.reset.value(3); } //k
+		{ keycode == 108 } { ~kl.value_(5); ~vpl.reset.value(4); } //l
+		{ keycode == 59 } { ~ksc.value_(5); ~vpl.reset.value(5); } //;
+		{ keycode == 39 } { ~kap.value_(5); ~vpl.reset.value(6); } //'
+		{ keycode == 65293 } { ~kret.value_(1); } //return
+		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
+		{ keycode == 122 } { ~switch.reset.value(8);} //z
+		{ keycode == 120 } { ~switch.reset.value(9);} //x
+		{ keycode == 99 } { ~switch.reset.value(10);} //c
+		{ keycode == 118 } { ~switch.reset.value(11);} //v
+		{ keycode == 90 } { ~offswitch.reset.value("~kz"); ~vsel.reset.value(88); } //Z
+		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vsel.reset.value(87); } //X
+		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vsel.reset.value(86); } //C
+		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vsel.reset.value(85); } //V
 		{ keycode == 110 } { ~kn.value_(5); ~vpl.reset.value(7); } //n
 		{ keycode == 109 } { ~km.value_(5); ~vpl.reset.value(8); } //m
 		{ keycode == 44 } { ~kcom.value_(5); ~vpl.reset.value(9); } //,
