@@ -95,32 +95,34 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 				{ test.asFloat.inclusivelyBetween(-150, -100) } { ~ph9.add(cnt) }
 				{ test.asFloat.inclusivelyBetween(-200, -150) } { ~ph10.add(cnt) }
 				{ test.asFloat.inclusivelyBetween(-250, -200) } { ~ph11.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-500, -44) } { ~ph12.add(cnt) };
+				{ test.asFloat.inclusivelyBetween(-500, -250) } { ~ph12.add(cnt) };
 			});
 		});
 	});
 };
 ////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////
 ~startup = r {
 	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play;
 	////////////////////////////////bag check
-	~bag_check = r { var thebag;
+	~bagcheck = r { var thebag;
 		thebag = Set.new;
 		thebag = ~dynbag.asSet & ~phbag.asSet;
+		thebag.size.postln;
 		~activebag = thebag.asBag;
 	};
 	////////////////////////////////dyn bag
 	~dyn_bagkiller = r { arg inval; var newbag;
 		newbag = Bag.new;
 		newbag = newbag++inval.asArray;
-		newbag.size.postln;
 		~dynbag = newbag.asBag;
 		~bagcheck.reset.play;
 	};
 	~dyn_bagfiller = r { arg inval; var thebag;
 		thebag = ~dynbag.asArray;
 		thebag = thebag++inval.asArray;
-		thebag.size.postln;
 		~dynbag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
@@ -129,7 +131,6 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
-		thebag.size.postln;
 		~dynbag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
@@ -137,14 +138,12 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 	~ph_bagkiller = r { arg inval; var newbag;
 		newbag = Bag.new;
 		newbag = newbag++inval.asArray;
-		newbag.size.postln;
 		~phbag = newbag.asBag;
 		~bagcheck.reset.play;
 	};
 	~ph_bagfiller = r { arg inval; var thebag;
 		thebag = ~phbag.asArray;
 		thebag = thebag++inval.asArray;
-		thebag.size.postln;
 		~phbag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
@@ -153,14 +152,17 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
-		thebag.size.postln;
+		thebag.removeEvery(inval.asList);
 		~phbag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
 	/////////////////////////////////DEF
-	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var sig, ptr;
-		ptr = Line.ar(start, (end - 100), ((((end - 100) - start).abs)/BufSampleRate.kr(buf)), doneAction:2);
+	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var bsr,dur, env, sig, ptr;
+		bsr = BufSampleRate.kr(buf);
+		dur =  ((((end - 5) - start).abs)/bsr);
+		ptr = Line.ar(start, (end - 5), dur, doneAction:2);
 		sig = BufRd.ar(1, buf, ptr);
+		sig = sig * EnvGen.kr(Env([0, 1, 1, 0], [(dur/100), (dur-(dur/5)-(dur/100)), (dur/5)]));
 		sig = sig * amp;
 		Out.ar(out, sig.dup;);
 	}).add;
@@ -279,18 +281,18 @@ OSCdef.new(\viscssel, {
 	{ msg[1] == 34 } { ~dyn_bagcleaner.reset.value(~d10) }
 	{ msg[1] == 35 } { ~dyn_bagcleaner.reset.value(~d11) }
 	{ msg[1] == 36 } { ~dyn_bagcleaner.reset.value(~d12) }
-	{ msg[1] == 37 } { ~ph_bagfiller.reset.value(~d1) }
-	{ msg[1] == 38 } { ~ph_bagfiller.reset.value(~d2) }
-	{ msg[1] == 39 } { ~ph_bagfiller.reset.value(~d3) }
-	{ msg[1] == 40 } { ~ph_bagfiller.reset.value(~d4) }
-	{ msg[1] == 41 } { ~ph_bagfiller.reset.value(~d5) }
-	{ msg[1] == 42 } { ~ph_bagfiller.reset.value(~d6) }
-	{ msg[1] == 43 } { ~ph_bagfiller.reset.value(~d7) }
-	{ msg[1] == 44 } { ~ph_bagfiller.reset.value(~d8) }
-	{ msg[1] == 45 } { ~ph_bagfiller.reset.value(~d9) }
-	{ msg[1] == 46 } { ~ph_bagfiller.reset.value(~d10) }
-	{ msg[1] == 47 } { ~ph_bagfiller.reset.value(~d11) }
-	{ msg[1] == 48 } { ~ph_bagfiller.reset.value(~d12) }
+	{ msg[1] == 37 } { ~ph_bagfiller.reset.value(~oh1) }
+	{ msg[1] == 38 } { ~ph_bagfiller.reset.value(~ph2) }
+	{ msg[1] == 39 } { ~ph_bagfiller.reset.value(~ph3) }
+	{ msg[1] == 40 } { ~ph_bagfiller.reset.value(~ph4) }
+	{ msg[1] == 41 } { ~ph_bagfiller.reset.value(~ph5) }
+	{ msg[1] == 42 } { ~ph_bagfiller.reset.value(~ph6) }
+	{ msg[1] == 43 } { ~ph_bagfiller.reset.value(~ph7) }
+	{ msg[1] == 44 } { ~ph_bagfiller.reset.value(~ph8) }
+	{ msg[1] == 45 } { ~ph_bagfiller.reset.value(~ph9) }
+	{ msg[1] == 46 } { ~ph_bagfiller.reset.value(~ph10) }
+	{ msg[1] == 47 } { ~ph_bagfiller.reset.value(~ph11) }
+	{ msg[1] == 48 } { ~ph_bagfiller.reset.value(~ph12) }
 	{ msg[1] == 49 } { ~ph_bagkiller.reset.value(~ph1) }
 	{ msg[1] == 50 } { ~ph_bagkiller.reset.value(~ph2) }
 	{ msg[1] == 51 } { ~ph_bagkiller.reset.value(~ph3) }
