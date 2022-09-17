@@ -1,16 +1,18 @@
-~corpus = "/run/media/ears/SAM-DRIVE/test-corp/";
+~corpus = "/run/media/tuckerj/SAM-DRIVE/test-corp/";
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
 ~d7 = Bag.new; ~d8 = Bag.new; ~d9 = Bag.new; ~d10 = Bag.new; ~d11 = Bag.new; ~d12 = Bag.new;
 ~ph1 = Bag.new; ~ph2 = Bag.new; ~ph3 = Bag.new; ~ph4 = Bag.new; ~ph5 = Bag.new; ~ph6 = Bag.new;
 ~ph7 = Bag.new; ~ph8 = Bag.new; ~ph9 = Bag.new; ~ph10 = Bag.new; ~ph11 = Bag.new; ~ph12 = Bag.new;
+////////////////////////////////////////////////////////
 ~csvload = r {
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"p-loudness/").entries.do({ arg path; p = p.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"h-loudness/").entries.do({ arg path; h = h.add(CSVFileReader.read(path.fullPath)).asArray; });
 	PathName(~corpus++"nslices/").entries.do({ arg path; t = t.add(CSVFileReader.read(path.fullPath)).asArray; });
 };
+////////////////////////////////////////////////////////
 ~averager = r {
 	l.do({ arg val, i; var outeri; outeri = i;
 		val.do({ arg item, i; var total=0.0, avg, ini; ini = i;
@@ -40,6 +42,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});
 	});
 };
+////////////////////////////////////////////////////////
 ~l_indexer = r { var dex, cnt, size;
 	cnt = 0; dex = Array.new;
 	l.do({ arg val, i; var outeri;
@@ -51,76 +54,109 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 				cnt = cnt + 1;
 				test = item[i][0].asFloat;
 				case
-				{ test.asFloat.inclusivelyBetween(-3.33, 10) }      { ~d1.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-6.66, -3.33) }   { ~d2.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-10, -6.66) }     { ~d3.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-13.33, 10) }     { ~d4.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-16.66, -13.33) } { ~d5.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-20, -16.66) }    { ~d6.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-23.33, -20) }    { ~d7.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-26.66, -23.33) } { ~d8.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-30, -26.66) }    { ~d9.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-33.33, -30) }    { ~d10.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-36.66, -33.33) } { ~d11.add(cnt) }
-				{ test.asFloat.inclusivelyBetween(-500, -36.66) }   { ~d12.add(cnt) };
+				{ test.asFloat.inclusivelyBetween(-4, 10) } { ~d1.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-8, -4) } { ~d2.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-12, -8) } { ~d3.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-16, -12) } { ~d4.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-20, -16) } { ~d5.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-24, -20) } { ~d6.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-28, -24) } { ~d7.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-32, -28) } { ~d8.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-36, -32) } { ~d9.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-40, -36) } { ~d10.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-44, -40) } { ~d11.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-500, -44) } { ~d12.add(cnt) };
 			});
 		});
 	});
 	~sdex = ~sdex++dex;
 };
-//~ph_avg = r { var cnt, mean, pmost, pleast, hmost, hleast;
-//	mean = Array.new; pleast = 0; pmost = -100; hleast = 0; hmost = -100;
-//	cnt = 0;
-//	p.do({ arg val, i; var outeri;
-//		outeri = i;
-//		val.do({ arg item, i; var perc, harm, ini;
-//			ini = i;
-//			item.size.do({ arg i;
-//				cnt = cnt + 1;
-//				perc = item[i][0].asFloat;
-//				harm = h[outeri][ini][0][0].asFloat;
-//				mean = ((perc/harm)-1)*100;
-//				mean.postln;
-//			});
-//		});
-//	});
-//	p.do({ arg val, i; var outeri;
-//		outeri = i;
-//		val.do({ arg item, i; var perc, harm, ini;
-//		ini = i;
-//			item.size.do({ arg i;
-//				cnt = cnt + 1;
-//
-//			});
-//		});
-//	});
-//};
-//~ph_avg.play;
+////////////////////////////////////////////////////////
+~ph_indexer = r { var cnt, test;
+	cnt = 0;
+	p.do({ arg val, i; var outeri;
+		outeri = i;
+		val.do({ arg item, i; var perc, harm, ini;
+			ini = i;
+			item.size.do({ arg i;
+				cnt = cnt + 1;
+				perc = item[i][0].asFloat;
+				harm = h[outeri][ini][0][0].asFloat;
+				test = ((perc/harm)-1)*100;
+				case
+				{ test.asFloat.inclusivelyBetween(250, 500) } { ~ph1.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(200, 250) } { ~ph2.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(150, 200) } { ~ph3.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(100, 150) } { ~ph4.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(50, 100) } { ~ph5.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(0, 50) } { ~ph6.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-50, 0) } { ~ph7.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-100, -50) } { ~ph8.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-150, -100) } { ~ph9.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-200, -150) } { ~ph10.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-250, -200) } { ~ph11.add(cnt) }
+				{ test.asFloat.inclusivelyBetween(-500, -44) } { ~ph12.add(cnt) };
+			});
+		});
+	});
+};
+////////////////////////////////////////////////////////
 ~startup = r {
-	~csvload.play; ~averager.play; ~l_indexer.play;
+	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play;
+	////////////////////////////////bag check
+	~bag_check = r { var thebag;
+		thebag = Set.new;
+		thebag = ~dynbag.asSet & ~phbag.asSet;
+		~activebag = thebag.asBag;
+	};
 	////////////////////////////////dyn bag
-	~bagkiller = r { arg inval; var newbag;
+	~dyn_bagkiller = r { arg inval; var newbag;
 		newbag = Bag.new;
 		newbag = newbag++inval.asArray;
 		newbag.size.postln;
-		~activebag = newbag.asBag;
+		~dynbag = newbag.asBag;
+		~bagcheck.reset.play;
 	};
-	~bagfiller = r { arg inval; var thebag;
-		thebag = ~activebag.asArray;
+	~dyn_bagfiller = r { arg inval; var thebag;
+		thebag = ~dynbag.asArray;
 		thebag = thebag++inval.asArray;
 		thebag.size.postln;
-		~activebag = thebag.asBag;
+		~dynbag = thebag.asBag;
+		~bagcheck.reset.play;
 	};
-	~bagcleaner = r { arg inval; var thebag;
-		thebag = ~activebag.asArray;
+	~dyn_bagcleaner = r { arg inval; var thebag;
+		thebag = ~dynbag.asArray;
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.removeEvery(inval.asList);
 		thebag.size.postln;
-		~activebag = thebag.asBag;
+		~dynbag = thebag.asBag;
+		~bagcheck.reset.play;
 	};
-	/////////////////////////////////
-
+	/////////////////////////////////ph bag
+	~ph_bagkiller = r { arg inval; var newbag;
+		newbag = Bag.new;
+		newbag = newbag++inval.asArray;
+		newbag.size.postln;
+		~phbag = newbag.asBag;
+		~bagcheck.reset.play;
+	};
+	~ph_bagfiller = r { arg inval; var thebag;
+		thebag = ~phbag.asArray;
+		thebag = thebag++inval.asArray;
+		thebag.size.postln;
+		~phbag = thebag.asBag;
+		~bagcheck.reset.play;
+	};
+	~ph_bagcleaner = r { arg inval; var thebag;
+		thebag = ~phbag.asArray;
+		thebag.removeEvery(inval.asList);
+		thebag.removeEvery(inval.asList);
+		thebag.removeEvery(inval.asList);
+		thebag.size.postln;
+		~phbag = thebag.asBag;
+		~bagcheck.reset.play;
+	};
 	/////////////////////////////////DEF
 	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var sig, ptr;
 		ptr = Line.ar(start, (end - 100), ((((end - 100) - start).abs)/BufSampleRate.kr(buf)), doneAction:2);
@@ -128,9 +164,9 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		sig = sig * amp;
 		Out.ar(out, sig.dup;);
 	}).add;
-	////////////////////////////////////////
+	////////////////////////////////////////DEF-Handler
 	x = { arg inval; var spos, epos; //handles creating new synths.
-		if( inval == nil,
+		if( inval.isNil,
 			{ "nilval".postln },
 			{
 				spos = t[inval[0]][0][inval[1]];
@@ -140,15 +176,17 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 					{
 						(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
 						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
-				});
-				});
+					}
+				);
+			});
 	};
-	////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////load Buffers and notify controller
 	s.waitForBoot({
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
 	});
+	/////////////////////////////////////////////////////
 	~j = {
 		arg val;
 		("AppClock.play(r {"
@@ -174,6 +212,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});").interpret
 	};
 };
+////////////////////////////////////////////////////
 OSCdef.new(\viscs, {
 	arg msg;
 	case
@@ -183,7 +222,6 @@ OSCdef.new(\viscs, {
 	{ msg[1] == 3 } { s.killAll }
 	};, '/con'
 );
-
 OSCdef.new(\viscspl, {
 	arg msg;
 	case
@@ -193,54 +231,89 @@ OSCdef.new(\viscspl, {
 	{ msg[1] == 3 } { ~j.value(10+5.rand) }
 	{ msg[1] == 4 } { ~j.value(20+10.rand) }
 	{ msg[1] == 5 } { ~j.value(30+20.rand) }
-	{ msg[1] == 7 } { ~j.value(50+30.rand) }
-	{ msg[1] == 8 } { ~n.value(3) }
-	{ msg[1] == 9 } { ~n.value(5) }
-	{ msg[1] == 10 } { ~n.value(8) }
-	{ msg[1] == 11 } { ~n.value(13) }
-	{ msg[1] == 12 } { ~n.value(19) }
+	{ msg[1] == 6 } { ~j.value(50+30.rand) }
+	{ msg[1] == 7 } { ~n.value(3) }
+	{ msg[1] == 8 } { ~n.value(5) }
+	{ msg[1] == 9 } { ~n.value(8) }
+	{ msg[1] == 10 } { ~n.value(13) }
+	{ msg[1] == 11 } { ~n.value(21) }
 	};, '/play'
 );
-
 OSCdef.new(\viscssel, {
 	arg msg;
 	case
 	{ msg[1] == 0 } { "viscsdyn test".postln }
-	{ msg[1] == 1 } { ~bagfiller.reset.value(~d1) }
-	{ msg[1] == 2 } { ~bagfiller.reset.value(~d2) }
-	{ msg[1] == 3 } { ~bagfiller.reset.value(~d3) }
-	{ msg[1] == 4 } { ~bagfiller.reset.value(~d4) }
-	{ msg[1] == 5 } { ~bagfiller.reset.value(~d5) }
-	{ msg[1] == 6 } { ~bagfiller.reset.value(~d6) }
-	{ msg[1] == 7 } { ~bagfiller.reset.value(~d7) }
-	{ msg[1] == 8 } { ~bagfiller.reset.value(~d8) }
-	{ msg[1] == 9 } { ~bagfiller.reset.value(~d9) }
-	{ msg[1] == 10 } { ~bagfiller.reset.value(~d10) }
-	{ msg[1] == 11 } { ~bagfiller.reset.value(~d11) }
-	{ msg[1] == 12 } { ~bagfiller.reset.value(~d12) }
-	{ msg[1] == 13 } { ~bagkiller.reset.value(~d1) }
-	{ msg[1] == 14 } { ~bagkiller.reset.value(~d2) }
-	{ msg[1] == 15 } { ~bagkiller.reset.value(~d3) }
-	{ msg[1] == 16 } { ~bagkiller.reset.value(~d4) }
-	{ msg[1] == 17 } { ~bagkiller.reset.value(~d5) }
-	{ msg[1] == 18 } { ~bagkiller.reset.value(~d6) }
-	{ msg[1] == 19 } { ~bagkiller.reset.value(~d7) }
-	{ msg[1] == 20 } { ~bagkiller.reset.value(~d8) }
-	{ msg[1] == 21 } { ~bagkiller.reset.value(~d9) }
-	{ msg[1] == 22 } { ~bagkiller.reset.value(~d10) }
-	{ msg[1] == 23 } { ~bagkiller.reset.value(~d11) }
-	{ msg[1] == 24 } { ~bagkiller.reset.value(~d12) }
-	{ msg[1] == 25 } { ~bagcleaner.reset.value(~d1) }
-	{ msg[1] == 26 } { ~bagcleaner.reset.value(~d2) }
-	{ msg[1] == 27 } { ~bagcleaner.reset.value(~d3) }
-	{ msg[1] == 28 } { ~bagcleaner.reset.value(~d4) }
-	{ msg[1] == 29 } { ~bagcleaner.reset.value(~d5) }
-	{ msg[1] == 30 } { ~bagcleaner.reset.value(~d6) }
-	{ msg[1] == 31 } { ~bagcleaner.reset.value(~d7) }
-	{ msg[1] == 32 } { ~bagcleaner.reset.value(~d8) }
-	{ msg[1] == 33 } { ~bagcleaner.reset.value(~d9) }
-	{ msg[1] == 34 } { ~bagcleaner.reset.value(~d10) }
-	{ msg[1] == 35 } { ~bagcleaner.reset.value(~d11) }
-	{ msg[1] == 36 } { ~bagcleaner.reset.value(~d12) }
+	{ msg[1] == 1 } { ~dyn_bagfiller.reset.value(~d1) }
+	{ msg[1] == 2 } { ~dyn_bagfiller.reset.value(~d2) }
+	{ msg[1] == 3 } { ~dyn_bagfiller.reset.value(~d3) }
+	{ msg[1] == 4 } { ~dyn_bagfiller.reset.value(~d4) }
+	{ msg[1] == 5 } { ~dyn_bagfiller.reset.value(~d5) }
+	{ msg[1] == 6 } { ~dyn_bagfiller.reset.value(~d6) }
+	{ msg[1] == 7 } { ~dyn_bagfiller.reset.value(~d7) }
+	{ msg[1] == 8 } { ~dyn_bagfiller.reset.value(~d8) }
+	{ msg[1] == 9 } { ~dyn_bagfiller.reset.value(~d9) }
+	{ msg[1] == 10 } { ~dyn_bagfiller.reset.value(~d10) }
+	{ msg[1] == 11 } { ~dyn_bagfiller.reset.value(~d11) }
+	{ msg[1] == 12 } { ~dyn_bagfiller.reset.value(~d12) }
+	{ msg[1] == 13 } { ~dyn_bagkiller.reset.value(~d1) }
+	{ msg[1] == 14 } { ~dyn_bagkiller.reset.value(~d2) }
+	{ msg[1] == 15 } { ~dyn_bagkiller.reset.value(~d3) }
+	{ msg[1] == 16 } { ~dyn_bagkiller.reset.value(~d4) }
+	{ msg[1] == 17 } { ~dyn_bagkiller.reset.value(~d5) }
+	{ msg[1] == 18 } { ~dyn_bagkiller.reset.value(~d6) }
+	{ msg[1] == 19 } { ~dyn_bagkiller.reset.value(~d7) }
+	{ msg[1] == 20 } { ~dyn_bagkiller.reset.value(~d8) }
+	{ msg[1] == 21 } { ~dyn_bagkiller.reset.value(~d9) }
+	{ msg[1] == 22 } { ~dyn_bagkiller.reset.value(~d10) }
+	{ msg[1] == 23 } { ~dyn_bagkiller.reset.value(~d11) }
+	{ msg[1] == 24 } { ~dyn_bagkiller.reset.value(~d12) }
+	{ msg[1] == 25 } { ~dyn_bagcleaner.reset.value(~d1) }
+	{ msg[1] == 26 } { ~dyn_bagcleaner.reset.value(~d2) }
+	{ msg[1] == 27 } { ~dyn_bagcleaner.reset.value(~d3) }
+	{ msg[1] == 28 } { ~dyn_bagcleaner.reset.value(~d4) }
+	{ msg[1] == 29 } { ~dyn_bagcleaner.reset.value(~d5) }
+	{ msg[1] == 30 } { ~dyn_bagcleaner.reset.value(~d6) }
+	{ msg[1] == 31 } { ~dyn_bagcleaner.reset.value(~d7) }
+	{ msg[1] == 32 } { ~dyn_bagcleaner.reset.value(~d8) }
+	{ msg[1] == 33 } { ~dyn_bagcleaner.reset.value(~d9) }
+	{ msg[1] == 34 } { ~dyn_bagcleaner.reset.value(~d10) }
+	{ msg[1] == 35 } { ~dyn_bagcleaner.reset.value(~d11) }
+	{ msg[1] == 36 } { ~dyn_bagcleaner.reset.value(~d12) }
+	{ msg[1] == 37 } { ~ph_bagfiller.reset.value(~d1) }
+	{ msg[1] == 38 } { ~ph_bagfiller.reset.value(~d2) }
+	{ msg[1] == 39 } { ~ph_bagfiller.reset.value(~d3) }
+	{ msg[1] == 40 } { ~ph_bagfiller.reset.value(~d4) }
+	{ msg[1] == 41 } { ~ph_bagfiller.reset.value(~d5) }
+	{ msg[1] == 42 } { ~ph_bagfiller.reset.value(~d6) }
+	{ msg[1] == 43 } { ~ph_bagfiller.reset.value(~d7) }
+	{ msg[1] == 44 } { ~ph_bagfiller.reset.value(~d8) }
+	{ msg[1] == 45 } { ~ph_bagfiller.reset.value(~d9) }
+	{ msg[1] == 46 } { ~ph_bagfiller.reset.value(~d10) }
+	{ msg[1] == 47 } { ~ph_bagfiller.reset.value(~d11) }
+	{ msg[1] == 48 } { ~ph_bagfiller.reset.value(~d12) }
+	{ msg[1] == 49 } { ~ph_bagkiller.reset.value(~ph1) }
+	{ msg[1] == 50 } { ~ph_bagkiller.reset.value(~ph2) }
+	{ msg[1] == 51 } { ~ph_bagkiller.reset.value(~ph3) }
+	{ msg[1] == 52 } { ~ph_bagkiller.reset.value(~ph4) }
+	{ msg[1] == 53 } { ~ph_bagkiller.reset.value(~ph5) }
+	{ msg[1] == 54 } { ~ph_bagkiller.reset.value(~ph6) }
+	{ msg[1] == 55 } { ~ph_bagkiller.reset.value(~ph7) }
+	{ msg[1] == 56 } { ~ph_bagkiller.reset.value(~ph8) }
+	{ msg[1] == 57 } { ~ph_bagkiller.reset.value(~ph9) }
+	{ msg[1] == 58 } { ~ph_bagkiller.reset.value(~ph10) }
+	{ msg[1] == 59 } { ~ph_bagkiller.reset.value(~ph11) }
+	{ msg[1] == 60 } { ~ph_bagkiller.reset.value(~ph12) }
+	{ msg[1] == 61 } { ~ph_bagcleaner.reset.value(~ph1) }
+	{ msg[1] == 62 } { ~ph_bagcleaner.reset.value(~ph2) }
+	{ msg[1] == 63 } { ~ph_bagcleaner.reset.value(~ph3) }
+	{ msg[1] == 64 } { ~ph_bagcleaner.reset.value(~ph4) }
+	{ msg[1] == 65 } { ~ph_bagcleaner.reset.value(~ph5) }
+	{ msg[1] == 66 } { ~ph_bagcleaner.reset.value(~ph6) }
+	{ msg[1] == 67 } { ~ph_bagcleaner.reset.value(~ph7) }
+	{ msg[1] == 68 } { ~ph_bagcleaner.reset.value(~ph8) }
+	{ msg[1] == 69 } { ~ph_bagcleaner.reset.value(~ph9) }
+	{ msg[1] == 70 } { ~ph_bagcleaner.reset.value(~ph10) }
+	{ msg[1] == 71 } { ~ph_bagcleaner.reset.value(~ph11) }
+	{ msg[1] == 72 } { ~ph_bagcleaner.reset.value(~ph12) }
 	};, '/sel'
 );

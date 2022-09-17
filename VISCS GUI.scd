@@ -439,7 +439,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		(val ++ ".value_(~ph_switches[" ++ i ++ "])").interpret;
 	});
 	~switches = [["~kq", "~kw", "~ke", "~kr", "~ka", "~ks", "~kd", "~kf", "~kz", "~kx", "~kc", "~kv"],
-		[48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37], [60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49]];
+		[48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37], [72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61]];
 	~switch = r {
 		arg inval;
 		if ( (~switches[0][inval] ++ ".value").interpret == 0,
@@ -483,10 +483,10 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 119 } { ~switch.reset.value(1);} //w
 		{ keycode == 101 } { ~switch.reset.value(2);} //e
 		{ keycode == 114 } { ~switch.reset.value(3);} //r
-		{ keycode == 81 } { ~offswitch.reset.value("~kq"); ~vsel.reset.value(72); } //Q
-		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(71); }  //W
-		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(70); }  //E
-		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(69); }  //R
+		{ keycode == 81 } { ~offswitch.reset.value("~kq"); ~vsel.reset.value(60); } //Q
+		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(59); }  //W
+		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(58); }  //E
+		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(57); }  //R
 		{ keycode == 121 } { ~ky.value_(5); } //y
 		{ keycode == 117 } { ~ku.value_(5); } //u
 		{ keycode == 105 } { ~ki.value_(5); } //i
@@ -499,10 +499,10 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 115 } { ~switch.reset.value(5);} //s
 		{ keycode == 100 } { ~switch.reset.value(6);} //d
 		{ keycode == 102 } { ~switch.reset.value(7);} //f
-		{ keycode == 65 } { ~offswitch.reset.value("~ka"); ~vsel.reset.value(68); } //A
-		{ keycode == 83 } { ~offswitch.reset.value("~ks"); ~vsel.reset.value(67); } //S
-		{ keycode == 68 } { ~offswitch.reset.value("~kd"); ~vsel.reset.value(66); } //D
-		{ keycode == 70 } { ~offswitch.reset.value("~kf"); ~vsel.reset.value(65); } //F
+		{ keycode == 65 } { ~offswitch.reset.value("~ka"); ~vsel.reset.value(56); } //A
+		{ keycode == 83 } { ~offswitch.reset.value("~ks"); ~vsel.reset.value(55); } //S
+		{ keycode == 68 } { ~offswitch.reset.value("~kd"); ~vsel.reset.value(54); } //D
+		{ keycode == 70 } { ~offswitch.reset.value("~kf"); ~vsel.reset.value(53); } //F
 		{ keycode == 104 } { ~kh.value_(5); ~vpl.reset.value(1);  } //h
 		{ keycode == 106 } { ~kj.value_(5); ~vpl.reset.value(2); } //j
 		{ keycode == 107 } { ~kk.value_(5); ~vpl.reset.value(3); } //k
@@ -515,10 +515,10 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		{ keycode == 120 } { ~switch.reset.value(9);} //x
 		{ keycode == 99 } { ~switch.reset.value(10);} //c
 		{ keycode == 118 } { ~switch.reset.value(11);} //v
-		{ keycode == 90 } { ~offswitch.reset.value("~kz"); ~vsel.reset.value(64); } //Z
-		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vsel.reset.value(63); } //X
-		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vsel.reset.value(62); } //C
-		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vsel.reset.value(61); } //V
+		{ keycode == 90 } { ~offswitch.reset.value("~kz"); ~vsel.reset.value(52); } //Z
+		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vsel.reset.value(51); } //X
+		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vsel.reset.value(50); } //C
+		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vsel.reset.value(49); } //V
 		{ keycode == 110 } { ~kn.value_(5); ~vpl.reset.value(7); } //n
 		{ keycode == 109 } { ~km.value_(5); ~vpl.reset.value(8); } //m
 		{ keycode == 44 } { ~kcom.value_(5); ~vpl.reset.value(9); } //,
