@@ -231,6 +231,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 				);
 			});
 	};
+	///////////////////////////////////////OSC-
 	///////////////////////////////////////////load Buffers and notify controller
 	s.waitForBoot({
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
