@@ -1,4 +1,4 @@
-~corpus = "/run/media/tuckerj/SAM-DRIVE/test-corp/";
+~corpus = "/home/tuckerj/Downloads/for-corpus/";
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -129,9 +129,10 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});
 	});
 };
+
 ////////////////////////////////////////////////////////
 ~startup = r {
-	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play; ~le_indexer.play;
+	~csvload.play; ~averager.play; ~l_indexer.play; ~ph_indexer.play; ~length_indexer.play;
 	////////////////////////////////bag check
 	~bagcheck = r { var thebag;
 		thebag = Set.new;
