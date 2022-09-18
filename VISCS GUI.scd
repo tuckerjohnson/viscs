@@ -601,8 +601,8 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
-		{ keycode == 49 } { ~k1.value_(4); ~k2.value_(0);  ~ph_state_store.reset.run; ~dyn_state.reset.run; } //1
-		{ keycode == 51 } { ~k3.value_(4); } //3
+		{ keycode == 49 } { ~k1.value_(4); ~k3.value_(0);  ~le_state_store.reset.run; ~dyn_state.reset.run; } //1
+		{ keycode == 50 } { ~k2.value_(4); ~k3.value_(0);  ~le_state_store.reset.run; ~le_state.reset.run; } //2
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
 		{ keycode == 54 } { ~k6.value_(4); } //6
