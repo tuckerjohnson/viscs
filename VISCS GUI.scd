@@ -1,4 +1,4 @@
-~viscs = NetAddr.new("192.168.0.101", 57120);
+~viscs = NetAddr.new("192.168.0.100", 57120);
 ~viscsmix = NetAddr.new("192.168.0.100", 57120);
 //
 //net addresses must be set prior to evaluation
@@ -31,6 +31,14 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 };
 
 ~gui_init = r {
+	~lev_ind = LevelIndicator(w, Rect(27, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
+	~lev_ind.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
+	~lev_ind2 = LevelIndicator(w, Rect(47, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
+	~lev_ind2.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
+	~lev_ind3 = LevelIndicator(w, Rect(67, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
+	~lev_ind3.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
+	~lev_ind4 = LevelIndicator(w, Rect(87, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
+	~lev_ind4.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
 	~karray = ["gra", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "da", "eq", "bac", "q", "w", "e", "r",
 		"y", "u", "i", "o", "p", "obr", "cbr", "bsl", "a", "s", "d", "f", "h", "j", "k", "l", "sc", "ap",
 		"ret", "lsh", "z", "x", "c", "v", "n", "m", "com", "per", "fsl", "rsh", "lctl", "lalt", "ralt", "rctl"];
@@ -63,7 +71,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~kcbr = Button(w, Rect(1040, 395, 65, 65)).font_(~font).canFocus_(false);
 	~kbsl = Button(w, Rect(1120, 395, 65, 65)).font_(~font).canFocus_(false);
 	////line3
-	~numBB = NumberBox(w, Rect(50, 430, 65, 65)).font_(~font).canFocus_(false).background_(~orange);
+	~numBB = StaticText(w, Rect(50, 430, 65, 65)).font_(~font).canFocus_(false).background_(~orange);
 	~ka = Button(w, Rect(170, 475, 65, 65)).font_(~font).canFocus_(false);
 	~ks = Button(w, Rect(250, 475, 65, 65)).font_(~font).canFocus_(false);
 	~kd = Button(w, Rect(330, 475, 65, 65)).font_(~font).canFocus_(false);
@@ -149,6 +157,29 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	});
 	~kk.value_(0); ~kl.value_(0); ~dyn_state.run; ~kgra.value_(0);
 };
+OSCdef.new(\bag, { arg msg;
+	("AppClock.play( r { ~numBB.string = " ++ msg[1] ++ ".asString;});").interpret;
+};, '/bag' );
+OSCdef.new(\instlevs, { arg msg;
+	{
+		~lev_ind.value = msg[1].linlin(-40, 0, 0, 1);
+	}.defer;
+};, '/instlevs2' );
+OSCdef.new(\instlevs2, { arg msg;
+	{
+		~lev_ind2.value = msg[1].linlin(-40, 0, 0, 1);
+	}.defer;
+};, '/instlevs2' );
+OSCdef.new(\instlevs3, { arg msg;
+	{
+		~lev_ind3.value = msg[1].linlin(-40, 0, 0, 1);
+	}.defer;
+};, '/instlevs3' );
+OSCdef.new(\instlevs4, { arg msg;
+	{
+		~lev_ind4.value = msg[1].linlin(-40, 0, 0, 1);
+	}.defer;
+};, '/instlevs4' );
 ~vcon = r { arg val;
 	~viscs.sendMsg("/con", val);
 };
