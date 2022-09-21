@@ -63,6 +63,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~kcbr = Button(w, Rect(1040, 395, 65, 65)).font_(~font).canFocus_(false);
 	~kbsl = Button(w, Rect(1120, 395, 65, 65)).font_(~font).canFocus_(false);
 	////line3
+	~numBB = NumberBox(w, Rect(50, 430, 65, 65)).font_(~font).canFocus_(false).background_(~orange);
 	~ka = Button(w, Rect(170, 475, 65, 65)).font_(~font).canFocus_(false);
 	~ks = Button(w, Rect(250, 475, 65, 65)).font_(~font).canFocus_(false);
 	~kd = Button(w, Rect(330, 475, 65, 65)).font_(~font).canFocus_(false);

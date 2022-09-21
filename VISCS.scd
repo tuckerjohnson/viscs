@@ -1,4 +1,5 @@
 ~corpus = "/home/tuckerj/Downloads/for-corpus/";
+~viscsgui = NetAddr.new("127.0.0.1", 57120);
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -139,7 +140,11 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag = ~dynbag.asSet & ~phbag.asSet;
 		thebag = thebag & ~lebag.asSet;
 		thebag.size.postln;
-		~activebag = thebag.asBag;
+		~viscsgui.sendMsg("/bag", thebag.size);
+		if( thebag.asBag.size == 0,
+			{ ~nib = nil },
+			{ ~activebag = thebag.asBag; }
+		);
 	};
 	////////////////////////////////dyn bag
 	~dyn_bagkiller = r { arg inval; var newbag;
