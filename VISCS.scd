@@ -1,5 +1,5 @@
 ~corpus = "/home/tuckerj/Downloads/for-corpus/";
-~viscsgui = NetAddr.new("127.0.0.1", 57120);
+~viscsgui = NetAddr.new("192.168.0.101", 57120);
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -212,14 +212,19 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~bagcheck.reset.play;
 	};
 	/////////////////////////////////DEF
-	SynthDef.new(\p, { arg amp=1, out=0, buf, start, end; var bsr,dur, env, sig, ptr;
+	SynthDef.new(\p, { arg amp=0.6, out, pan=0, buf, start, end; var bsr ,dur, env, sig, ptr, w, x, y;
 		bsr = BufSampleRate.kr(buf);
 		dur =  ((((end - 5) - start).abs)/bsr);
 		ptr = Line.ar(start, (end - 5), dur, doneAction:2);
 		sig = BufRd.ar(1, buf, ptr);
 		sig = sig * EnvGen.kr(Env([0, 1, 1, 0], [(dur/100), (dur-(dur/5)-(dur/100)), (dur/5)]));
 		sig = sig * amp;
-		Out.ar(out, sig.dup;);
+		Out.ar(out, PanB2.ar(sig, pan));
+	}).add;
+	SynthDef.new(\decode, { arg in; var w,x,y,imp,a,b,c,d;
+		#w, x, y = In.ar(in, 3);
+		#a, b, c, d = DecodeB2.ar(4, w, x, y);
+		Out.ar(0, [a, b, d, c]);
 	}).add;
 	////////////////////////////////////////DEF-Handler
 	x = { arg inval; var spos, epos; //handles creating new synths.
@@ -232,7 +237,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 					{ "nilval".postln },
 					{
 						(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger]);
+						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger, \out, ~wxybus, \pan, [0.5,0.3,0.2,1,-0.1,-0.4].choose]);
 					}
 				);
 			});
@@ -243,6 +248,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
+		~wxybus = Bus.audio(s, 3);
+		~decoder = Synth.new(\decode, [\in, ~wxybus], s.defaultGroup, \addAfter);
 	});
 	/////////////////////////////////////////////////////
 	~j = {
