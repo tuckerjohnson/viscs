@@ -158,6 +158,7 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~kk.value_(0); ~kl.value_(0); ~dyn_state.run; ~kgra.value_(0);
 };
 OSCdef.new(\bag, { arg msg;
+	msg[1].postln;
 	("AppClock.play( r { ~numBB.string = " ++ msg[1] ++ ".asString;});").interpret;
 };, '/bag' );
 OSCdef.new(\instlevs, { arg msg;

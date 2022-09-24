@@ -1,5 +1,6 @@
-~corpus = "/home/tuckerj/Downloads/for-corpus/";
+~corpus = "/home/tuckerj/Lib/group-corpus/";
 ~viscsgui = NetAddr.new("192.168.0.101", 57120);
+Server.default.options.numOutputBusChannels_(4);
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -212,7 +213,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~bagcheck.reset.play;
 	};
 	/////////////////////////////////DEF
-	SynthDef.new(\p, { arg amp=0.6, out, pan=0, buf, start, end; var bsr ,dur, env, sig, ptr, w, x, y;
+	SynthDef.new(\p, { arg amp=0.2, out, pan=0, buf, start, end; var bsr ,dur, env, sig, ptr, w, x, y;
 		bsr = BufSampleRate.kr(buf);
 		dur =  ((((end - 5) - start).abs)/bsr);
 		ptr = Line.ar(start, (end - 5), dur, doneAction:2);
@@ -237,7 +238,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 					{ "nilval".postln },
 					{
 						(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger, \out, ~wxybus, \pan, [0.5,0.3,0.2,1,-0.1,-0.4].choose]);
+						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger, \out, ~wxybus, \pan, ((200.rand/100)-1)]);
 					}
 				);
 			});
@@ -248,8 +249,10 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		PathName(~corpus++"wav/").entries.do({ arg path, i;
 			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
 		});
+		~dspgroup = Group.new(s.defaultGroup, \addAfter);
+		~inbus = Bus.audio(s, 1);
 		~wxybus = Bus.audio(s, 3);
-		~decoder = Synth.new(\decode, [\in, ~wxybus], s.defaultGroup, \addAfter);
+		~decoder = Synth.new(\decode, [\in, ~wxybus], ~dspgroup, \addAfter);
 	});
 	/////////////////////////////////////////////////////
 	~j = {
