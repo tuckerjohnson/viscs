@@ -1,5 +1,4 @@
-~viscs = NetAddr.new("192.168.0.100", 57120);
-~viscsmix = NetAddr.new("192.168.0.100", 57120);
+~viscs = NetAddr.new("127.0.0.1", 57120);
 //
 //net addresses must be set prior to evaluation
 //
@@ -29,7 +28,6 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~genstate.run;
 	~start_state.run;
 };
-
 ~gui_init = r {
 	~lev_ind = LevelIndicator(w, Rect(27, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
 	~lev_ind.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
@@ -161,26 +159,6 @@ OSCdef.new(\bag, { arg msg;
 	msg[1].postln;
 	("AppClock.play( r { ~numBB.string = " ++ msg[1] ++ ".asString;});").interpret;
 };, '/bag' );
-OSCdef.new(\instlevs, { arg msg;
-	{
-		~lev_ind.value = msg[1].linlin(-40, 0, 0, 1);
-	}.defer;
-};, '/instlevs2' );
-OSCdef.new(\instlevs2, { arg msg;
-	{
-		~lev_ind2.value = msg[1].linlin(-40, 0, 0, 1);
-	}.defer;
-};, '/instlevs2' );
-OSCdef.new(\instlevs3, { arg msg;
-	{
-		~lev_ind3.value = msg[1].linlin(-40, 0, 0, 1);
-	}.defer;
-};, '/instlevs3' );
-OSCdef.new(\instlevs4, { arg msg;
-	{
-		~lev_ind4.value = msg[1].linlin(-40, 0, 0, 1);
-	}.defer;
-};, '/instlevs4' );
 ~vcon = r { arg val;
 	~viscs.sendMsg("/con", val);
 };
@@ -190,6 +168,18 @@ OSCdef.new(\instlevs4, { arg msg;
 ~vpl = r { arg val;
 	~viscs.sendMsg("/play", val);
 };
+////////////////////////////////////////////////////////
+~glob_switches = [["~ky", "~ku", "~ki", "~ko"],[401, 402, 403, 404],[405, 406, 407, 408]];
+~g_switch = r {
+		arg inval;
+		if ( (~glob_switches[0][inval] ++ ".value").interpret == 0,
+			{ (~glob_switches[0][inval] ++ ".value_(1)").interpret; ~vpl.reset.value(~glob_switches[1][inval]); },
+			{ if ( (~glob_switches[0][inval] ++ ".value").interpret == 1,
+				{ (~glob_switches[0][inval] ++ ".value_(0)").interpret; ~vpl.reset.value(~glob_switches[2][inval]); },
+				{ (~glob_switches[0][inval] ++ ".value_(0)").interpret }
+			)}
+		);
+	};
 ////////////////////////////////////////////////////////
 ~start_state = r {
 	w.view.keyDownAction = {
@@ -387,10 +377,10 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(23); }  //W
 		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(22); }  //E
 		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(21); }  //R
-		{ keycode == 121 } { ~ky.value_(5); } //y
-		{ keycode == 117 } { ~ku.value_(5); } //u
-		{ keycode == 105 } { ~ki.value_(5); } //i
-		{ keycode == 111 } { ~ko.value_(5); } //o
+		{ keycode == 121 } { ~g_switch.reset.value(0); } //y
+		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
+		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
+		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
 		{ keycode == 112 } { ~kp.value_(5); } //p
 		{ keycode == 91 } { ~kobr.value_(5); } //[
 		{ keycode == 93 } { ~kcbr.value_(5); } //]
@@ -437,10 +427,6 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 45 } { ~kda.value_(0); } //-
 		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
-		{ keycode == 121 } { ~ky.value_(0); } //y
-		{ keycode == 117 } { ~ku.value_(0); } //u
-		{ keycode == 105 } { ~ki.value_(0); } //i
-		{ keycode == 111 } { ~ko.value_(0); } //o
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
 		{ keycode == 93 } { ~kcbr.value_(0); } //]
@@ -522,10 +508,10 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(59); }  //W
 		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(58); }  //E
 		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(57); }  //R
-		{ keycode == 121 } { ~ky.value_(5); } //y
-		{ keycode == 117 } { ~ku.value_(5); } //u
-		{ keycode == 105 } { ~ki.value_(5); } //i
-		{ keycode == 111 } { ~ko.value_(5); } //o
+		{ keycode == 121 } { ~g_switch.reset.value(0); } //y
+		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
+		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
+		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
 		{ keycode == 112 } { ~kp.value_(5); } //p
 		{ keycode == 91 } { ~kobr.value_(5); } //[
 		{ keycode == 93 } { ~kcbr.value_(5); } //]
@@ -572,10 +558,6 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 45 } { ~kda.value_(0); } //-
 		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
-		{ keycode == 121 } { ~ky.value_(0); } //y
-		{ keycode == 117 } { ~ku.value_(0); } //u
-		{ keycode == 105 } { ~ki.value_(0); } //i
-		{ keycode == 111 } { ~ko.value_(0); } //o
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
 		{ keycode == 93 } { ~kcbr.value_(0); } //]
@@ -657,10 +639,10 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(95); }  //W
 		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(94); }  //E
 		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(93); }  //R
-		{ keycode == 121 } { ~ky.value_(5); } //y
-		{ keycode == 117 } { ~ku.value_(5); } //u
-		{ keycode == 105 } { ~ki.value_(5); } //i
-		{ keycode == 111 } { ~ko.value_(5); } //o
+		{ keycode == 121 } { ~g_switch.reset.value(0); } //y
+		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
+		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
+		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
 		{ keycode == 112 } { ~kp.value_(5); } //p
 		{ keycode == 91 } { ~kobr.value_(5); } //[
 		{ keycode == 93 } { ~kcbr.value_(5); } //]
@@ -707,10 +689,6 @@ OSCdef.new(\instlevs4, { arg msg;
 		{ keycode == 45 } { ~kda.value_(0); } //-
 		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
-		{ keycode == 121 } { ~ky.value_(0); } //y
-		{ keycode == 117 } { ~ku.value_(0); } //u
-		{ keycode == 105 } { ~ki.value_(0); } //i
-		{ keycode == 111 } { ~ko.value_(0); } //o
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
 		{ keycode == 93 } { ~kcbr.value_(0); } //]

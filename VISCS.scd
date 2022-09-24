@@ -1,6 +1,6 @@
-~corpus = "/home/tuckerj/Lib/group-corpus/";
-~viscsgui = NetAddr.new("192.168.0.101", 57120);
-Server.default.options.numOutputBusChannels_(4);
+~corpus = "/run/media/tuckerj/SAM-DRIVE/group-corpus/";
+~viscsgui = NetAddr.new("127.0.0.1", 57120);
+Server.default.options.numOutputBusChannels_(2);
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
 ~d1 = Bag.new; ~d2 = Bag.new; ~d3 = Bag.new; ~d4 = Bag.new; ~d5 = Bag.new; ~d6 = Bag.new;
@@ -9,6 +9,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~ph7 = Bag.new; ~ph8 = Bag.new; ~ph9 = Bag.new; ~ph10 = Bag.new; ~ph11 = Bag.new; ~ph12 = Bag.new;
 ~le1 = Bag.new; ~le2 = Bag.new; ~le3 = Bag.new; ~le4 = Bag.new; ~le5 = Bag.new; ~le6 = Bag.new;
 ~le7 = Bag.new; ~le8 = Bag.new; ~le9 = Bag.new; ~le10 = Bag.new; ~le11 = Bag.new; ~le12 = Bag.new;
+~ambag = Bag.new;
 ////////////////////////////////////////////////////////
 ~csvload = r {
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
@@ -212,15 +213,28 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~lebag = thebag.asBag;
 		~bagcheck.reset.play;
 	};
+	/////////////////////////////////ambisonic pan state
+	~ambisonic_panstate = r { arg bob; var bag;
+		bag = Bag.new;
+		case
+		{ ~am1 == 1 } { bag++[[-1.25, -0.75]] };
+		case
+		{ ~am2 == 1 } { bag++[[-0.75, -0.25]] };
+		case
+		{ ~am3 == 1 } { bag++[[-0.25, 0.25]] };
+		case
+		{ ~am4 == 1 } { bag++[[0.25, 0.75]] };
+		~ambag = bag;
+	};
 	/////////////////////////////////DEF
-	SynthDef.new(\p, { arg amp=0.2, out, pan=0, buf, start, end; var bsr ,dur, env, sig, ptr, w, x, y;
+	SynthDef.new(\p, { arg amp=0.2, out, plo=(-1.0), phi=1.0, buf, start, end; var bsr ,dur, env, sig, ptr, w, x, y;
 		bsr = BufSampleRate.kr(buf);
 		dur =  ((((end - 5) - start).abs)/bsr);
 		ptr = Line.ar(start, (end - 5), dur, doneAction:2);
 		sig = BufRd.ar(1, buf, ptr);
 		sig = sig * EnvGen.kr(Env([0, 1, 1, 0], [(dur/100), (dur-(dur/5)-(dur/100)), (dur/5)]));
 		sig = sig * amp;
-		Out.ar(out, PanB2.ar(sig, pan));
+		Out.ar(out, PanB2.ar(sig, Rand(plo.wrap(-1,1),phi.wrap(-1,1))));
 	}).add;
 	SynthDef.new(\decode, { arg in; var w,x,y,imp,a,b,c,d;
 		#w, x, y = In.ar(in, 3);
@@ -228,7 +242,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		Out.ar(0, [a, b, d, c]);
 	}).add;
 	////////////////////////////////////////DEF-Handler
-	x = { arg inval; var spos, epos; //handles creating new synths.
+	x = { arg inval; var spos, epos, hilo; //handles creating new synths.
 		if( inval.isNil,
 			{ "nilval".postln },
 			{
@@ -238,7 +252,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 					{ "nilval".postln },
 					{
 						(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger, \out, ~wxybus, \pan, ((200.rand/100)-1)]);
+						Synth.new(\p, [\buf, inval[0], \start, spos.asInteger, \end, epos.asInteger, \out, ~wxybus, \plo, ~hilo[1], \phi, ~hilo[0]]);
 					}
 				);
 			});
@@ -259,8 +273,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		arg val;
 		("AppClock.play(r {"
 			++ val ++ ".do({
-			var ind;
-			ind = ~activebag.choose;"
+			var ind, hilo;
+			~hilo = ~ambag.choose; ind = ~activebag.choose;"
 			++ val ++ ".post;
 			x.value(~sdex[ind]);
 			Array.fill(30, {arg i; (300.rand/4000)}).choose.wait;
@@ -271,8 +285,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		arg val;
 		("AppClock.play(r {"
 			++ val ++ ".do({
-			var ind;
-			ind = ~activebag.choose;"
+			var ind, hilo;
+			~hilo = ~ambag.choose; ind = ~activebag.choose;"
 			++ val ++ ".post;
 			x.value(~sdex[ind]);
 			Array.fill(30, {arg i; (300.rand/600)}).choose.wait;
@@ -305,6 +319,14 @@ OSCdef.new(\viscspl, {
 	{ msg[1] == 9 } { ~n.value(8) }
 	{ msg[1] == 10 } { ~n.value(13) }
 	{ msg[1] == 11 } { ~n.value(21) }
+	{ msg[1] == 401 } { ~am1 = 1; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 402 } { ~am2 = 1; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 403 } { ~am3 = 1; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 404 } { ~am4 = 1; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 405 } { ~am1 = 0; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 406 } { ~am2 = 0; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 407 } { ~am3 = 0; ~ambisonic_panstate.reset.play; }
+	{ msg[1] == 408 } { ~am4 = 0; ~ambisonic_panstate.reset.play; }
 	};, '/play'
 );
 OSCdef.new(\viscssel, {
