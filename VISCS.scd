@@ -1,5 +1,5 @@
 ~corpus = "/home/tuckerj/Lib/group-corpus/";
-~viscsgui = NetAddr.new("192.168.0.101", 57120);
+~viscsgui = NetAddr.new("127.0.0.1", 57120);
 Server.default.options.numOutputBusChannels_(4);
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
