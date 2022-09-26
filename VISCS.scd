@@ -264,6 +264,9 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		sig = sig * 0.2;
 		Out.ar(out, sig);
 	}).add;
+	SynthDef.new(\verb, { arg in, out, mix, del, dec; var sig, wet;
+
+	}).add;
 	SynthDef.new(\bmake, { arg in, out; var sig, aw, ax, ay, bw, bx, by, cw, cx, cy, dw, dx, dy;
 		sig = In.ar(in);
 		#aw, ax, ay = PanB2.ar(sig, 0);
@@ -300,6 +303,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		});
 		~dspgroup = Group.new(s.defaultGroup, \addAfter);
 		~analyzergroup = Group.new(~dspgroup);
+		~verbgroup = Group.new(~analyzergroup, \addAfter);
 		~todspbus = Bus.audio(s, 1);
 		~instdspbus = Bus.audio(s, 1);
 		~instbus = Bus.audio(s, 3);
