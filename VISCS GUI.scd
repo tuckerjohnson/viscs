@@ -29,14 +29,6 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~start_state.run;
 };
 ~gui_init = r {
-	~lev_ind = LevelIndicator(w, Rect(27, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
-	~lev_ind.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
-	~lev_ind2 = LevelIndicator(w, Rect(47, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
-	~lev_ind2.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
-	~lev_ind3 = LevelIndicator(w, Rect(67, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
-	~lev_ind3.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
-	~lev_ind4 = LevelIndicator(w, Rect(87, 3, 19, 175)).style_(\led).numSteps_(27).drawsPeak_(false);
-	~lev_ind4.meterColor_(~green).warningColor_(~yellow).criticalColor_(~red).background_(~base02);
 	~karray = ["gra", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "da", "eq", "bac", "q", "w", "e", "r",
 		"y", "u", "i", "o", "p", "obr", "cbr", "bsl", "a", "s", "d", "f", "h", "j", "k", "l", "sc", "ap",
 		"ret", "lsh", "z", "x", "c", "v", "n", "m", "com", "per", "fsl", "rsh", "lctl", "lalt", "ralt", "rctl"];
@@ -355,7 +347,7 @@ OSCdef.new(\bag, { arg msg;
 	w.view.keyDownAction = {
 		|doc, char, mod, unicode, keycode, key|
 		case
-		{ keycode == 96 } { ~kgra.value_(3); ~vcon.reset.value(2); } //`
+		{ keycode == 96 } { ~kgra.value_(2); ~vcon.reset.value(2); } //`
 		{ keycode == 49 } { ~bil =  nil; } //1
 		{ keycode == 50 } { ~k2.value_(4); ~k1.value_(0); ~dyn_state_store.reset.run; ~ph_state.reset.run; } //2
 		{ keycode == 51 } { ~k3.value_(4); ~k1.value_(0); ~dyn_state_store.reset.run; ~le_state.reset.run; } //3
@@ -365,9 +357,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 55 } { ~k7.value_(4); } //7
 		{ keycode == 56 } { ~k8.value_(4); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
-		{ keycode == 48 } { ~k0.value_(4); } //0
-		{ keycode == 45 } { ~kda.value_(4); } //-
-		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
+		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
+		{ keycode == 61 } { ~keq.value_(2); ~vcon.reset.value(14); } //=
 		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
 		{ keycode == 113 } { ~switch.reset.value(0);} //q
 		{ keycode == 119 } { ~switch.reset.value(1);} //w
@@ -381,10 +373,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
 		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
 		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
-		{ keycode == 112 } { ~kp.value_(5); } //p
-		{ keycode == 91 } { ~kobr.value_(5); } //[
-		{ keycode == 93 } { ~kcbr.value_(5); } //]
-		{ keycode == 92 } { ~kbsl.value_(1); } //\
+		{ keycode == 112 } { ~kp.value_(3); ~k0.value_(0); ~vcon.reset.value(11); } //p
+		{ keycode == 91 } { ~kobr.value_(3); ~kda.value_(0); ~vcon.reset.value(13); } //- } //[
+		{ keycode == 93 } { ~kcbr.value_(3); ~keq.value_(0); ~vcon.reset.value(15); } //]
+		{ keycode == 92 } { ~kbsl.value_(3); ~vcon.reset.value(15); ~keq.value_(0); ~vcon.reset.value(13); ~kda.value_(0); ~vcon.reset.value(11); ~k0.value_(0); } //\
 		{ keycode == 97 } { ~switch.reset.value(4);} //a
 		{ keycode == 115 } { ~switch.reset.value(5);} //s
 		{ keycode == 100 } { ~switch.reset.value(6);} //d
@@ -424,8 +416,6 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
-		{ keycode == 45 } { ~kda.value_(0); } //-
-		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
@@ -496,9 +486,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 55 } { ~k7.value_(4); } //7
 		{ keycode == 56 } { ~k8.value_(4); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
-		{ keycode == 48 } { ~k0.value_(4); } //0
-		{ keycode == 45 } { ~kda.value_(4); } //-
-		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
+		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
+		{ keycode == 61 } { ~keq.value_(2); ~vcon.reset.value(14); } //=
 		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
 		{ keycode == 113 } { ~switch.reset.value(0);} //q
 		{ keycode == 119 } { ~switch.reset.value(1);} //w
@@ -512,10 +502,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
 		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
 		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
-		{ keycode == 112 } { ~kp.value_(5); } //p
-		{ keycode == 91 } { ~kobr.value_(5); } //[
-		{ keycode == 93 } { ~kcbr.value_(5); } //]
-		{ keycode == 92 } { ~kbsl.value_(1); } //\
+		{ keycode == 112 } { ~kp.value_(3); ~k0.value_(0); ~vcon.reset.value(11); } //p
+		{ keycode == 91 } { ~kobr.value_(3); ~kda.value_(0); ~vcon.reset.value(13); } //- } //[
+		{ keycode == 93 } { ~kcbr.value_(3); ~keq.value_(0); ~vcon.reset.value(15); } //]
+		{ keycode == 92 } { ~kbsl.value_(3); ~vcon.reset.value(15); ~keq.value_(0); ~vcon.reset.value(13); ~kda.value_(0); ~vcon.reset.value(11); ~k0.value_(0); } //\
 		{ keycode == 97 } { ~switch.reset.value(4);} //a
 		{ keycode == 115 } { ~switch.reset.value(5);} //s
 		{ keycode == 100 } { ~switch.reset.value(6);} //d
@@ -555,8 +545,6 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
-		{ keycode == 45 } { ~kda.value_(0); } //-
-		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
@@ -627,9 +615,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 55 } { ~k7.value_(4); } //7
 		{ keycode == 56 } { ~k8.value_(4); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
-		{ keycode == 48 } { ~k0.value_(4); } //0
-		{ keycode == 45 } { ~kda.value_(4); } //-
-		{ keycode == 61 } { ~keq.value_(4); } //=
+		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
+		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
+		{ keycode == 61 } { ~keq.value_(2); ~vcon.reset.value(14); } //=
 		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
 		{ keycode == 113 } { ~switch.reset.value(0);} //q
 		{ keycode == 119 } { ~switch.reset.value(1);} //w
@@ -643,10 +631,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
 		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
 		{ keycode == 111 } { ~g_switch.reset.value(3); } //o
-		{ keycode == 112 } { ~kp.value_(5); } //p
-		{ keycode == 91 } { ~kobr.value_(5); } //[
-		{ keycode == 93 } { ~kcbr.value_(5); } //]
-		{ keycode == 92 } { ~kbsl.value_(1); } //\
+		{ keycode == 112 } { ~kp.value_(3); ~k0.value_(0); ~vcon.reset.value(11); } //p
+		{ keycode == 91 } { ~kobr.value_(3); ~kda.value_(0); ~vcon.reset.value(13); } //- } //[
+		{ keycode == 93 } { ~kcbr.value_(3); ~keq.value_(0); ~vcon.reset.value(15); } //]
+		{ keycode == 92 } { ~kbsl.value_(3); ~vcon.reset.value(15); ~keq.value_(0); ~vcon.reset.value(13); ~kda.value_(0); ~vcon.reset.value(11); ~k0.value_(0); } //\
 		{ keycode == 97 } { ~switch.reset.value(4);} //a
 		{ keycode == 115 } { ~switch.reset.value(5);} //s
 		{ keycode == 100 } { ~switch.reset.value(6);} //d
@@ -686,8 +674,6 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
-		{ keycode == 45 } { ~kda.value_(0); } //-
-		{ keycode == 61 } { ~keq.value_(0); } //=
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
