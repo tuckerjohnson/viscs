@@ -407,10 +407,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 46 } { ~kper.value_(5); ~vpl.reset.value(10); } //.
 		{ keycode == 47 } { ~kfsl.value_(5); ~vpl.reset.value(11); } ///
 		{ keycode == 65506 } { ~krsh.value_(3); } //rshift
-		{ keycode == 65507 } { ~klctl.value_(3); } //lctl
-		{ keycode == 65513 } { ~klalt.value_(3); } //lalt
-		{ keycode == 65514 } { ~kralt.value_(3); } //ralt
-		{ keycode == 65508 } { ~krctl.value_(3); }; //rctl
+		{ keycode == 65507 } { ~klctl.value_(3); ~vcon.reset.value(44); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(3); ~vcon.reset.value(43); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(3); ~vcon.reset.value(41); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(3); ~vcon.reset.value(42); }; //rctl
 	};
 	w.view.keyUpAction = {
 		|doc, char, mod, unicode, keycode, key|
@@ -536,10 +536,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 46 } { ~kper.value_(5); ~vpl.reset.value(10); } //.
 		{ keycode == 47 } { ~kfsl.value_(5); ~vpl.reset.value(11); } ///
 		{ keycode == 65506 } { ~krsh.value_(3); } //rshift
-		{ keycode == 65507 } { ~klctl.value_(3); } //lctl
-		{ keycode == 65513 } { ~klalt.value_(3); } //lalt
-		{ keycode == 65514 } { ~kralt.value_(3); } //ralt
-		{ keycode == 65508 } { ~krctl.value_(3); }; //rctl
+		{ keycode == 65507 } { ~klctl.value_(3); ~vcon.reset.value(44);} //lctl
+		{ keycode == 65513 } { ~klalt.value_(3); ~vcon.reset.value(43); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(3); ~vcon.reset.value(41); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(3); ~vcon.reset.value(42); }; //rctl
 	};
 	w.view.keyUpAction = {
 		|doc, char, mod, unicode, keycode, key|
@@ -665,10 +665,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 46 } { ~kper.value_(5); ~vpl.reset.value(10); } //.
 		{ keycode == 47 } { ~kfsl.value_(5); ~vpl.reset.value(11); } ///
 		{ keycode == 65506 } { ~krsh.value_(3); } //rshift
-		{ keycode == 65507 } { ~klctl.value_(3); } //lctl
-		{ keycode == 65513 } { ~klalt.value_(3); } //lalt
-		{ keycode == 65514 } { ~kralt.value_(3); } //ralt
-		{ keycode == 65508 } { ~krctl.value_(3); }; //rctl
+		{ keycode == 65507 } { ~klctl.value_(3); ~vcon.reset.value(44); } //lctl
+		{ keycode == 65513 } { ~klalt.value_(3); ~vcon.reset.value(43); } //lalt
+		{ keycode == 65514 } { ~kralt.value_(3); ~vcon.reset.value(41); } //ralt
+		{ keycode == 65508 } { ~krctl.value_(3); ~vcon.reset.value(42); }; //rctl
 	};
 	w.view.keyUpAction = {
 		|doc, char, mod, unicode, keycode, key|

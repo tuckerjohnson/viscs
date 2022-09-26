@@ -1,6 +1,6 @@
 ~corpus = "/home/tuckerj/Lib/group-corpus/";
 ~viscsgui = NetAddr.new("127.0.0.1", 57120);
-Server.default.options.numOutputBusChannels_(2);
+Server.default.options.numOutputBusChannels_(4);
 Server.default.options.memSize_(2.pow(20));
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~sdex = Array.new;
@@ -11,6 +11,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~le1 = Bag.new; ~le2 = Bag.new; ~le3 = Bag.new; ~le4 = Bag.new; ~le5 = Bag.new; ~le6 = Bag.new;
 ~le7 = Bag.new; ~le8 = Bag.new; ~le9 = Bag.new; ~le10 = Bag.new; ~le11 = Bag.new; ~le12 = Bag.new;
 ~ambag = Bag.new;
+~dsp_out_gate_val = 0;
 ////////////////////////////////////////////////////////
 ~csvload = r {
 	PathName(~corpus++"loudness/").entries.do({ arg path; l = l.add(CSVFileReader.read(path.fullPath)).asArray; });
@@ -259,16 +260,23 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		sig = SoundIn.ar * EnvGate.new(0, gate, fade, 0);
 		Out.ar(out, sig);
 	}).add;
-	SynthDef.new(\analyzer, { arg in, out; var sig;
+	SynthDef.new(\analyzer, { arg in, amp=0.5, out; var sig;
 		sig = FluidSines.ar(In.ar(in);, detectionThreshold:-30,minTrackLen:2,windowSize:8192,fftSize: 8192)[0];
-		sig = sig * 0.2;
+		sig = sig * amp;
 		Out.ar(out, sig);
 	}).add;
-	SynthDef.new(\verb, { arg in, out, mix, del, dec; var sig, wet;
-
-	}).add;
-	SynthDef.new(\bmake, { arg in, out; var sig, aw, ax, ay, bw, bx, by, cw, cx, cy, dw, dx, dy;
+	SynthDef.new(\verb, { arg in, out, mix=0.5, dec=25, predel=0.03, lpf=1500; var sig, wet;
 		sig = In.ar(in);
+		wet = DelayN.ar(sig, 0.1, predel);
+		wet = 4.collect({
+			CombC.ar(wet, 0.1, LFNoise1.kr(0.02).exprange(0.01, 0.02), dec)
+		});
+		wet = LPF.ar(wet, lpf);
+		sig = sig.blend(wet, mix) * 0.2;
+		Out.ar(out, sig);
+	}).add;
+	SynthDef.new(\bmake, { arg in, out, gate, fade=0.3; var sig, aw, ax, ay, bw, bx, by, cw, cx, cy, dw, dx, dy;
+		sig = In.ar(in) * EnvGate.new(0, gate, fade, 0);
 		#aw, ax, ay = PanB2.ar(sig, 0);
 		#bw, bx, by = PanB2.ar(sig, 0.5);
 		#cw, cx, cy = PanB2.ar(sig, (-0.5));
@@ -307,12 +315,16 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~todspbus = Bus.audio(s, 1);
 		~instdspbus = Bus.audio(s, 1);
 		~instbus = Bus.audio(s, 3);
+		~verbbus = Bus.audio(s, 1);
+		~toverbbus = Bus.audio(s, 1);
 		~dspbus = Bus.audio(s, 1);
 		~outbus = Bus.audio(s, 3);
 		~microphone = Synth.new(\mic, [\out, ~todspbus], s.defaultGroup, \addBefore);
 		~instgate = Synth.new(\bgate, [\in, ~instbus, \out, ~outbus], ~dspgroup, \addBefore);
 		~instdspgate = Synth.new(\gate, [\in, ~instdspbus, \out, ~todspbus], ~dspgroup, \addBefore);
-		~analyzer = Synth.new(\analyzer, [\in, ~todspbus, \out, ~dspbus], ~analyzergroup);
+		~analyzer = Synth.new(\analyzer, [\in, ~todspbus, \out, ~verbbus], ~analyzergroup);
+		~preverbgate = Synth.new(\gate, [\in, ~verbbus, \out, ~toverbbus], ~analyzergroup, \addAfter);
+		~verber = Synth.new(\verb, [\in, ~toverbbus, \out, ~dspbus], ~verbgroup);
 		~dspb = Synth.new(\bmake, [\in, ~dspbus, \out, ~outbus], ~dspgroup, \addToTail);
 		~decoder = Synth.new(\decode, [\in, ~outbus], ~dspgroup, \addAfter);
 	});
@@ -356,8 +368,14 @@ OSCdef.new(\viscs, {
 	{ msg[1] == 11 } { ~microphone.set(\gate, 0) }
 	{ msg[1] == 12 } { ~instdspgate.set(\gate, 1) }
 	{ msg[1] == 13 } { ~instdspgate.set(\gate, 0) }
+	{ msg[1] == 12 } { ~instdspgate.set(\gate, 1) }
+	{ msg[1] == 41 } { ~preverbgate.set(\fade, 5, \gate, 0); }
+	{ msg[1] == 42 } { ~preverbgate.set(\fade, 0.2, \gate, 1); }
+	{ msg[1] == 43 } { ~dsp_out_gate_val = (~dsp_out_gate_val + 0.1).clip(0.1,2); ~analyzer.set(\amp, ~dsp_out_gate_val); }
+	{ msg[1] == 44 } { ~dsp_out_gate_val = (~dsp_out_gate_val - 0.1).clip(0.1,2); ~analyzer.set(\amp, ~dsp_out_gate_val); }
 	};, '/con'
 );
+~dsp_out_gate_val;
 OSCdef.new(\viscspl, {
 	arg msg;
 	case
