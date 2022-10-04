@@ -1,4 +1,4 @@
-~viscs = NetAddr.new("127.0.0.1", 57120);
+~viscs = NetAddr.new("192.168.0.102", 57120);
 //
 //net addresses must be set prior to evaluation
 //
@@ -353,9 +353,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 51 } { ~k3.value_(4); ~k1.value_(0); ~dyn_state_store.reset.run; ~le_state.reset.run; } //3
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
-		{ keycode == 54 } { ~k6.value_(4); } //6
-		{ keycode == 55 } { ~k7.value_(4); } //7
-		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 54 } { ~k6.value_(1); ~vsel.reset.value(600); } //6
+		{ keycode == 55 } { ~k7.value_(4); ~vsel.reset.value(601); } //7
+		{ keycode == 56 } { ~k8.value_(4); ~vsel.reset.value(602); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
 		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
 		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
@@ -416,6 +416,12 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
+		{ keycode == 52 } { ~k4.value_(0); } //4
+		{ keycode == 53 } { ~k5.value_(0); } //5
+		{ keycode == 54 } { ~k6.value_(0); ~vsel.reset.value(700); } //6
+		{ keycode == 55 } { ~k7.value_(0); ~vsel.reset.value(701); } //7
+		{ keycode == 56 } { ~k8.value_(0); ~vsel.reset.value(702); } //8
+		{ keycode == 57 } { ~k9.value_(0); } //9
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
@@ -482,9 +488,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 51 } { ~k2.value_(0);  ~k3.value_(4); ~ph_state_store.reset.run; ~le_state.reset.run; } //3
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
-		{ keycode == 54 } { ~k6.value_(4); } //6
-		{ keycode == 55 } { ~k7.value_(4); } //7
-		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 54 } { ~k6.value_(1); ~vsel.reset.value(600); } //6
+		{ keycode == 55 } { ~k7.value_(4); ~vsel.reset.value(601); } //7
+		{ keycode == 56 } { ~k8.value_(4); ~vsel.reset.value(602); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
 		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
 		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
@@ -545,6 +551,12 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
+		{ keycode == 52 } { ~k4.value_(0); } //4
+		{ keycode == 53 } { ~k5.value_(0); } //5
+		{ keycode == 54 } { ~k6.value_(0); ~vsel.reset.value(700); } //6
+		{ keycode == 55 } { ~k7.value_(0); ~vsel.reset.value(701); } //7
+		{ keycode == 56 } { ~k8.value_(0); ~vsel.reset.value(702); } //8
+		{ keycode == 57 } { ~k9.value_(0); } //9
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[
@@ -611,9 +623,9 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 51 } { ~bil =  nil; } //3
 		{ keycode == 52 } { ~k4.value_(4); } //4
 		{ keycode == 53 } { ~k5.value_(4); } //5
-		{ keycode == 54 } { ~k6.value_(4); } //6
-		{ keycode == 55 } { ~k7.value_(4); } //7
-		{ keycode == 56 } { ~k8.value_(4); } //8
+		{ keycode == 54 } { ~k6.value_(1); ~vsel.reset.value(600); } //6
+		{ keycode == 55 } { ~k7.value_(4); ~vsel.reset.value(601); } //7
+		{ keycode == 56 } { ~k8.value_(4); ~vsel.reset.value(602); } //8
 		{ keycode == 57 } { ~k9.value_(4); } //9
 		{ keycode == 48 } { ~k0.value_(2); ~vcon.reset.value(10); } //0
 		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
@@ -674,6 +686,12 @@ OSCdef.new(\bag, { arg msg;
 		|doc, char, mod, unicode, keycode, key|
 		case
 		{ keycode == 96 } { ~kgra.value_(0); } //`
+		{ keycode == 52 } { ~k4.value_(0); } //4
+		{ keycode == 53 } { ~k5.value_(0); } //5
+		{ keycode == 54 } { ~k6.value_(0); ~vsel.reset.value(700); } //6
+		{ keycode == 55 } { ~k7.value_(0); ~vsel.reset.value(701); } //7
+		{ keycode == 56 } { ~k8.value_(0); ~vsel.reset.value(702); } //8
+		{ keycode == 57 } { ~k9.value_(0); } //9
 		{ keycode == 65288 } { ~kbac.value_(0); } //backspace
 		{ keycode == 112 } { ~kp.value_(0); } //p
 		{ keycode == 91 } { ~kobr.value_(0); } //[

@@ -1,5 +1,5 @@
-~corpus = "/home/tuckerj/Lib/group-corpus/";
-~viscsgui = NetAddr.new("127.0.0.1", 57120);
+~corpus = "/home/tuckerj/Lib/per-corp/";
+~viscsgui = NetAddr.new("192.168.0.103", 57120);
 Server.default.options.numOutputBusChannels_(4);
 Server.default.options.memSize_(2.pow(20));
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
@@ -10,6 +10,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 ~ph7 = Bag.new; ~ph8 = Bag.new; ~ph9 = Bag.new; ~ph10 = Bag.new; ~ph11 = Bag.new; ~ph12 = Bag.new;
 ~le1 = Bag.new; ~le2 = Bag.new; ~le3 = Bag.new; ~le4 = Bag.new; ~le5 = Bag.new; ~le6 = Bag.new;
 ~le7 = Bag.new; ~le8 = Bag.new; ~le9 = Bag.new; ~le10 = Bag.new; ~le11 = Bag.new; ~le12 = Bag.new;
+~spedbag = Bag.new; ~specbag_1 = Bag.new; ~specbag_2 = Bag.new; ~specbag_3 = Bag.new;
 ~ambag = Bag.new;
 ~dsp_out_gate_val = 0;
 ////////////////////////////////////////////////////////
@@ -73,6 +74,10 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 				{ test.asFloat.inclusivelyBetween(-40, -36) } { ~d10.add(cnt) }
 				{ test.asFloat.inclusivelyBetween(-44, -40) } { ~d11.add(cnt) }
 				{ test.asFloat.inclusivelyBetween(-500, -44) } { ~d12.add(cnt) };
+				case
+				{ outeri.asFloat.inclusivelyBetween(432, 456) } { ~specbag_1.add(cnt) }
+				{ outeri.asFloat.inclusivelyBetween(645, 651) } { ~specbag_2.add(cnt) }
+				{ outeri.asFloat.inclusivelyBetween(671, 778) } { ~specbag_3.add(cnt) };
 			});
 		});
 	});
@@ -143,6 +148,16 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		thebag = Set.new;
 		thebag = ~dynbag.asSet & ~phbag.asSet;
 		thebag = thebag & ~lebag.asSet;
+		thebag.size.postln;
+		~viscsgui.sendMsg("/bag", thebag.size);
+		if( thebag.asBag.size == 0,
+			{ ~nib = nil },
+			{ ~activebag = thebag.asBag; }
+		);
+	};
+	~specbagcheck = r { arg inval; var thebag;
+		thebag = Array.new;
+		thebag = thebag++inval.asArray;
 		thebag.size.postln;
 		~viscsgui.sendMsg("/bag", thebag.size);
 		if( thebag.asBag.size == 0,
@@ -265,7 +280,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		sig = sig * amp;
 		Out.ar(out, sig);
 	}).add;
-	SynthDef.new(\verb, { arg in, out, mix=0.5, dec=25, predel=0.03, lpf=1500; var sig, wet;
+	SynthDef.new(\verb, { arg in, out, mix=0.5, dec=15, predel=0.03, lpf=1500; var sig, wet;
 		sig = In.ar(in);
 		wet = DelayN.ar(sig, 0.1, predel);
 		wet = 4.collect({
@@ -513,5 +528,8 @@ OSCdef.new(\viscssel, {
 	{ msg[1] == 106 } { ~le_bagcleaner.reset.value(~le10) }
 	{ msg[1] == 107 } { ~le_bagcleaner.reset.value(~le11) }
 	{ msg[1] == 108 } { ~le_bagcleaner.reset.value(~le12) }
+	{ msg[1] == 600 } { ~specbagcheck.reset.value(~specbag_1) }
+	{ msg[1] == 601 } { ~specbagcheck.reset.value(~specbag_2) }
+	{ msg[1] == 602 } { ~specbagcheck.reset.value(~specbag_3) }
 	};, '/sel'
 );
