@@ -298,6 +298,17 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		#dw, dx, dy = PanB2.ar(sig, 1);
 		Out.ar(out, [(aw+bw+cw+dw),(ax+bx+cx+dx),(ay+by+cy+dy)]);
 	}).add;
+	SynthDef.new(\compresso, { arg in, out, out2, thresh, ratio, clamp=0.01, relax=0.5; var sig;
+		ratio = ratio.reciprocal;
+		sig = In.ar(in);
+		sig = Compander.ar(sig, sig, thresh, 1, ratio, clamp, relax);
+		Out.ar(out, sig);
+		Out.ar(out2, sig);
+	}).add;
+	SynthDef.new(\strip, { arg in, out, mul; var sig;
+		sig = In.ar(in);
+		Out.ar(out, Pan2.ar(sig, 0, mul));
+	}).add;
 	////////////////////////////////////////DEF-Handler
 	x = { arg inval; var spos, epos, hilo; //handles creating new synths.
 		if( inval.isNil,
@@ -328,6 +339,8 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~analyzergroup = Group.new(~dspgroup);
 		~verbgroup = Group.new(~analyzergroup, \addAfter);
 		~todspbus = Bus.audio(s, 1);
+		~toanalysisbus = Bus.audio(s, 1);
+		~todiroutbus = Bus.audio(s, 1);
 		~instdspbus = Bus.audio(s, 1);
 		~instbus = Bus.audio(s, 3);
 		~verbbus = Bus.audio(s, 1);
@@ -335,9 +348,11 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~dspbus = Bus.audio(s, 1);
 		~outbus = Bus.audio(s, 3);
 		~microphone = Synth.new(\mic, [\out, ~todspbus], s.defaultGroup, \addBefore);
+		~compressor = Synth.new(\compresso, [\in, ~todspbus, \out, ~toanalysisbus, \out2, ~todiroutbus, \thresh, 0.6, \ratio, 3], ~dspgroup);
+		~dirout = Synth.new(\strip, [\in, ~todiroutbus, \out, 0, \mul, 0.3], ~dspgroup, \addAfter);
 		~instgate = Synth.new(\bgate, [\in, ~instbus, \out, ~outbus], ~dspgroup, \addBefore);
-		~instdspgate = Synth.new(\gate, [\in, ~instdspbus, \out, ~todspbus], ~dspgroup, \addBefore);
-		~analyzer = Synth.new(\analyzer, [\in, ~todspbus, \out, ~verbbus], ~analyzergroup);
+		~instdspgate = Synth.new(\gate, [\in, ~instdspbus, \out, ~toanalysisbus], ~dspgroup, \addBefore);
+		~analyzer = Synth.new(\analyzer, [\in, ~toanalysisbus, \out, ~verbbus], ~analyzergroup);
 		~preverbgate = Synth.new(\gate, [\in, ~verbbus, \out, ~toverbbus], ~analyzergroup, \addAfter);
 		~verber = Synth.new(\verb, [\in, ~toverbbus, \out, ~dspbus], ~verbgroup);
 		~dspb = Synth.new(\bmake, [\in, ~dspbus, \out, ~outbus], ~dspgroup, \addToTail);
@@ -390,7 +405,7 @@ OSCdef.new(\viscs, {
 	{ msg[1] == 44 } { ~dsp_out_gate_val = (~dsp_out_gate_val - 0.1).clip(0.1,2); ~analyzer.set(\amp, ~dsp_out_gate_val); }
 	};, '/con'
 );
-~dsp_out_gate_val;
+
 OSCdef.new(\viscspl, {
 	arg msg;
 	case

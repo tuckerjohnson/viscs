@@ -58,7 +58,7 @@ while read line; do
 	sample=$(ffsample-get wav/"$name".wav)
 	cline=$(echo ${line})
 	echo "EVALUATING FILE: $name : frames = $sample" ; echo "creating novelty slices"
-	fluid-noveltyslice -source "$cline" -indices nslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" nslices/"$name"-ts.csv
+	fluid-transientslice -source "$cline" -indices nslices/"$name"-ts.csv ; sed -i "s/$/,$sample/; s/-1/0/g;" nslices/"$name"-ts.csv
 	echo "calculating loudness" ; loudness_loop "$cline" loudness "$name"
 	echo "extracting harmonic layer" ; fluid-hpss -source "$cline" -harmonic /tmp/"$name"-tmp.wav &&
 		echo "calculating harmonic loudness" ; loudness_loop /tmp/"$name"-tmp.wav h-loudness "$name" ; rm -f /tmp/"$name"-tmp.wav
