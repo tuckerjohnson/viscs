@@ -1,5 +1,5 @@
 ~corpus = "/home/tuckerj/Lib/per-corp/";
-~viscsgui = NetAddr.new("192.168.0.103", 57120);
+~viscsgui = NetAddr.new("127.0.0.1", 57120);
 Server.default.options.numOutputBusChannels_(4);
 Server.default.options.memSize_(2.pow(20));
 b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
@@ -349,7 +349,7 @@ b = Array.new; t = Array.new; l = Array.new; h = Array.new; p = Array.new;
 		~outbus = Bus.audio(s, 3);
 		~microphone = Synth.new(\mic, [\out, ~todspbus], s.defaultGroup, \addBefore);
 		~compressor = Synth.new(\compresso, [\in, ~todspbus, \out, ~toanalysisbus, \out2, ~todiroutbus, \thresh, 0.6, \ratio, 3], ~dspgroup);
-		~dirout = Synth.new(\strip, [\in, ~todiroutbus, \out, 0, \mul, 0.3], ~dspgroup, \addAfter);
+		~dirout = Synth.new(\strip, [\in, ~todiroutbus, \out, 0, \mul, 0.6], ~dspgroup, \addAfter);
 		~instgate = Synth.new(\bgate, [\in, ~instbus, \out, ~outbus], ~dspgroup, \addBefore);
 		~instdspgate = Synth.new(\gate, [\in, ~instdspbus, \out, ~toanalysisbus], ~dspgroup, \addBefore);
 		~analyzer = Synth.new(\analyzer, [\in, ~toanalysisbus, \out, ~verbbus], ~analyzergroup);

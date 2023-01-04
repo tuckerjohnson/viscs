@@ -1,4 +1,4 @@
-~viscs = NetAddr.new("192.168.0.102", 57120);
+~viscs = NetAddr.new("127.0.0.1", 57120);
 //
 //net addresses must be set prior to evaluation
 //
