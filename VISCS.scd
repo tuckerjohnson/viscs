@@ -1,4 +1,4 @@
-~corpus = "/home/tuckerj/Lib/per-corp/";
+~corpus = "/home/tuckerj/Library/newest-corp/";
 ~viscsgui = NetAddr.new("127.0.0.1", 57120);
 Server.default.options.numOutputBusChannels_(4);
 Server.default.options.memSize_(2.pow(20));
