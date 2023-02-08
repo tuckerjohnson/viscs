@@ -90,6 +90,45 @@ w = Window("VISCS-CON", Rect(0, 0, 1200, 715)).front.background_(
 	~klalt = Button(w, Rect(190, 635, 160, 65)).font_(~font).canFocus_(false);
 	~kralt = Button(w, Rect(765, 635, 100, 65)).font_(~font).canFocus_(false);
 	~krctl = Button(w, Rect(880, 635, 100, 65)).font_(~font).canFocus_(false);
+	////info 1
+	~onekq = StaticText(w, Rect(95, 250, 15, 16)).font_(~font).canFocus_(false).string_("q").stringColor_(~base03);
+	~onekw = StaticText(w, Rect(110, 250, 15, 16)).font_(~font).canFocus_(false).string_("w").stringColor_(~base03);
+	~oneke = StaticText(w, Rect(125, 250, 15, 16)).font_(~font).canFocus_(false).string_("e").stringColor_(~base03);
+	~onekr = StaticText(w, Rect(140, 250, 15, 16)).font_(~font).canFocus_(false).string_("r").stringColor_(~base03);
+	~oneka = StaticText(w, Rect(98, 270, 15, 16)).font_(~font).canFocus_(false).string_("a").stringColor_(~base03);
+	~oneks = StaticText(w, Rect(113, 270, 15, 16)).font_(~font).canFocus_(false).string_("s").stringColor_(~base03);
+	~onekd = StaticText(w, Rect(128, 270, 15, 16)).font_(~font).canFocus_(false).string_("d").stringColor_(~base03);
+	~onekf = StaticText(w, Rect(143, 270, 15, 16)).font_(~font).canFocus_(false).string_("f").stringColor_(~base03);
+	~onekz = StaticText(w, Rect(102, 290, 15, 16)).font_(~font).canFocus_(false).string_("z").stringColor_(~base03);
+	~onekx = StaticText(w, Rect(117, 290, 15, 16)).font_(~font).canFocus_(false).string_("x").stringColor_(~base03);
+	~onekc = StaticText(w, Rect(132, 290, 15, 16)).font_(~font).canFocus_(false).string_("c").stringColor_(~base03);
+	~onekv = StaticText(w, Rect(147, 290, 15, 16)).font_(~font).canFocus_(false).string_("v").stringColor_(~base03);
+	////info 2
+	~twoq = StaticText(w, Rect(95+80, 250, 15, 16)).font_(~font).canFocus_(false).string_("q").stringColor_(~base03);
+	~twow = StaticText(w, Rect(110+80, 250, 15, 16)).font_(~font).canFocus_(false).string_("w").stringColor_(~base03);
+	~twoe = StaticText(w, Rect(125+80, 250, 15, 16)).font_(~font).canFocus_(false).string_("e").stringColor_(~base03);
+	~twor = StaticText(w, Rect(140+80, 250, 15, 16)).font_(~font).canFocus_(false).string_("r").stringColor_(~base03);
+	~twoa = StaticText(w, Rect(98+80, 270, 15, 16)).font_(~font).canFocus_(false).string_("a").stringColor_(~base03);
+	~twos = StaticText(w, Rect(113+80, 270, 15, 16)).font_(~font).canFocus_(false).string_("s").stringColor_(~base03);
+	~twod = StaticText(w, Rect(128+80, 270, 15, 16)).font_(~font).canFocus_(false).string_("d").stringColor_(~base03);
+	~twof = StaticText(w, Rect(143+80, 270, 15, 16)).font_(~font).canFocus_(false).string_("f").stringColor_(~base03);
+	~twoz = StaticText(w, Rect(102+80, 290, 15, 16)).font_(~font).canFocus_(false).string_("z").stringColor_(~base03);
+	~twox = StaticText(w, Rect(117+80, 290, 15, 16)).font_(~font).canFocus_(false).string_("x").stringColor_(~base03);
+	~twoc = StaticText(w, Rect(132+80, 290, 15, 16)).font_(~font).canFocus_(false).string_("c").stringColor_(~base03);
+	~twov = StaticText(w, Rect(147+80, 290, 15, 16)).font_(~font).canFocus_(false).string_("v").stringColor_(~base03);
+	////info 3
+	~thrq = StaticText(w, Rect(95+160, 250, 15, 16)).font_(~font).canFocus_(false).string_("q").stringColor_(~base03);
+	~thrw = StaticText(w, Rect(110+160, 250, 15, 16)).font_(~font).canFocus_(false).string_("w").stringColor_(~base03);
+	~thre = StaticText(w, Rect(125+160, 250, 15, 16)).font_(~font).canFocus_(false).string_("e").stringColor_(~base03);
+	~thrr = StaticText(w, Rect(140+160, 250, 15, 16)).font_(~font).canFocus_(false).string_("r").stringColor_(~base03);
+	~thra = StaticText(w, Rect(98+160, 270, 15, 16)).font_(~font).canFocus_(false).string_("a").stringColor_(~base03);
+	~thrs = StaticText(w, Rect(113+160, 270, 15, 16)).font_(~font).canFocus_(false).string_("s").stringColor_(~base03);
+	~thrd = StaticText(w, Rect(128+160, 270, 15, 16)).font_(~font).canFocus_(false).string_("d").stringColor_(~base03);
+	~thrf = StaticText(w, Rect(143+160, 270, 15, 16)).font_(~font).canFocus_(false).string_("f").stringColor_(~base03);
+	~thrz = StaticText(w, Rect(102+160, 290, 15, 16)).font_(~font).canFocus_(false).string_("z").stringColor_(~base03);
+	~thrx = StaticText(w, Rect(117+160, 290, 15, 16)).font_(~font).canFocus_(false).string_("x").stringColor_(~base03);
+	~thrc = StaticText(w, Rect(132+160, 290, 15, 16)).font_(~font).canFocus_(false).string_("c").stringColor_(~base03);
+	~thrv = StaticText(w, Rect(147+160, 290, 15, 16)).font_(~font).canFocus_(false).string_("v").stringColor_(~base03);
 };
 /////////////////////////////////////////////
 ~genstate = r {
@@ -315,19 +354,25 @@ OSCdef.new(\bag, { arg msg;
 ~dyn_switches = [0,0,0,0,0,0,0,0,0,0,0,0];
 ~dyn_state = r {
 	 ~k1.value_(4);
-	~switches = [["~kq", "~kw", "~ke", "~kr", "~ka", "~ks", "~kd", "~kf", "~kz", "~kx", "~kc", "~kv"],
+	~switches = [["kq", "kw", "ke", "kr", "ka", "ks", "kd", "kf", "kz", "kx", "kc", "kv"],
 		[12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], [36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25]];
 	~switches[0].do({
 		arg val, i;
-		(val ++ ".value_(~dyn_switches[" ++ i ++ "])").interpret;
+		("~" ++ val ++ ".value_(~dyn_switches[" ++ i ++ "])").interpret;
 	});
 	~switch = r {
 		arg inval;
-		if ( (~switches[0][inval] ++ ".value").interpret == 0,
-			{ (~switches[0][inval] ++ ".value_(2)").interpret; ~vsel.reset.value(~switches[1][inval]); },
-			{ if ( (~switches[0][inval] ++ ".value").interpret == 2,
-				{ (~switches[0][inval] ++ ".value_(0)").interpret; ~vsel.reset.value(~switches[2][inval]); },
-				{ (~switches[0][inval] ++ ".value_(0)").interpret }
+		if ( ("~" ++ ~switches[0][inval] ++ ".value").interpret == 0,
+			{ ("~" ++ ~switches[0][inval] ++ ".value_(2)").interpret;
+				~vsel.reset.value(~switches[1][inval]);
+				("~" ++ "one" ++ ~switches[0][inval] ++ ".stringColor_(~yellow)").interpret;
+			},
+			{ if ( ("~" ++ ~switches[0][inval] ++ ".value").interpret == 2,
+				{ ("~" ++ ~switches[0][inval] ++ ".value_(0)").interpret;
+					~vsel.reset.value(~switches[2][inval]);
+					("~" ++ "one" ++ ~switches[0][inval] ++ ".stringColor_(~base03)").interpret;
+				},
+				{ ("~" ++ ~switches[0][inval] ++ ".value_(0)").interpret }
 			)}
 		);
 	};
@@ -335,9 +380,11 @@ OSCdef.new(\bag, { arg msg;
 		arg inval;
 		~switches[0].do({
 			arg val;
-			(val ++ ".value_(0)").interpret;
+			("~" ++ val ++ ".value_(0)").interpret;
+			("~" ++ "one" ++ val ++ ".stringColor_(~base03)").interpret;
 		});
-		(inval ++ ".value_(2)").interpret;
+		("~" ++ inval ++ ".value_(2)").interpret;
+		("~" ++ "one" ++ inval ++ ".stringColor_(~yellow)").interpret;
 	};
 	~dyn_state_store = r {
 		~dyn_switches = [~kq.value, ~kw.value, ~ke.value, ~kr.value,
@@ -361,14 +408,14 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 45 } { ~kda.value_(2); ~vcon.reset.value(12); } //-
 		{ keycode == 61 } { ~keq.value_(2); ~vcon.reset.value(14); } //=
 		{ keycode == 65288 } { ~kbac.value_(3); } //backspace
-		{ keycode == 113 } { ~switch.reset.value(0);} //q
-		{ keycode == 119 } { ~switch.reset.value(1);} //w
-		{ keycode == 101 } { ~switch.reset.value(2);} //e
-		{ keycode == 114 } { ~switch.reset.value(3);} //r
-		{ keycode == 81 } { ~offswitch.reset.value("~kq"); ~vsel.reset.value(24); } //Q
-		{ keycode == 87 } { ~offswitch.reset.value("~kw"); ~vsel.reset.value(23); }  //W
-		{ keycode == 69 } { ~offswitch.reset.value("~ke"); ~vsel.reset.value(22); }  //E
-		{ keycode == 82 } { ~offswitch.reset.value("~kr"); ~vsel.reset.value(21); }  //R
+		{ keycode == 113 } { ~switch.reset.value(0); } //q
+		{ keycode == 119 } { ~switch.reset.value(1); }//w
+		{ keycode == 101 } { ~switch.reset.value(2); }//e
+		{ keycode == 114 } { ~switch.reset.value(3); }//r
+		{ keycode == 81 } { ~offswitch.reset.value("kq"); ~vsel.reset.value(24); } //Q
+		{ keycode == 87 } { ~offswitch.reset.value("kw"); ~vsel.reset.value(23); }  //W
+		{ keycode == 69 } { ~offswitch.reset.value("ke"); ~vsel.reset.value(22); }  //E
+		{ keycode == 82 } { ~offswitch.reset.value("kr"); ~vsel.reset.value(21); }  //R
 		{ keycode == 121 } { ~g_switch.reset.value(0); } //y
 		{ keycode == 117 } { ~g_switch.reset.value(1); } //u
 		{ keycode == 105 } { ~g_switch.reset.value(2); } //i
@@ -381,10 +428,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 115 } { ~switch.reset.value(5);} //s
 		{ keycode == 100 } { ~switch.reset.value(6);} //d
 		{ keycode == 102 } { ~switch.reset.value(7);} //f
-		{ keycode == 65 } { ~offswitch.reset.value("~ka"); ~vsel.reset.value(20); } //A
-		{ keycode == 83 } { ~offswitch.reset.value("~ks"); ~vsel.reset.value(19); } //S
-		{ keycode == 68 } { ~offswitch.reset.value("~kd"); ~vsel.reset.value(18); } //D
-		{ keycode == 70 } { ~offswitch.reset.value("~kf"); ~vsel.reset.value(17); } //F
+		{ keycode == 65 } { ~offswitch.reset.value("ka"); ~vsel.reset.value(20); } //A
+		{ keycode == 83 } { ~offswitch.reset.value("ks"); ~vsel.reset.value(19); } //S
+		{ keycode == 68 } { ~offswitch.reset.value("kd"); ~vsel.reset.value(18); } //D
+		{ keycode == 70 } { ~offswitch.reset.value("kf"); ~vsel.reset.value(17); } //F
 		{ keycode == 104 } { ~kh.value_(5); ~vpl.reset.value(1);  } //h
 		{ keycode == 106 } { ~kj.value_(5); ~vpl.reset.value(2); } //j
 		{ keycode == 107 } { ~kk.value_(5); ~vpl.reset.value(3); } //k
@@ -397,10 +444,10 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 120 } { ~switch.reset.value(9);} //x
 		{ keycode == 99 } { ~switch.reset.value(10);} //c
 		{ keycode == 118 } { ~switch.reset.value(11);} //v
-		{ keycode == 90 } { ~offswitch.reset.value("~kz"); ~vsel.reset.value(16); } //Z
-		{ keycode == 88 } { ~offswitch.reset.value("~kx"); ~vsel.reset.value(15); } //X
-		{ keycode == 67 } { ~offswitch.reset.value("~kc"); ~vsel.reset.value(14); } //C
-		{ keycode == 86 } { ~offswitch.reset.value("~kv"); ~vsel.reset.value(13); } //V
+		{ keycode == 90 } { ~offswitch.reset.value("kz"); ~vsel.reset.value(16); } //Z
+		{ keycode == 88 } { ~offswitch.reset.value("kx"); ~vsel.reset.value(15); } //X
+		{ keycode == 67 } { ~offswitch.reset.value("kc"); ~vsel.reset.value(14); } //C
+		{ keycode == 86 } { ~offswitch.reset.value("kv"); ~vsel.reset.value(13); } //V
 		{ keycode == 110 } { ~kn.value_(5); ~vpl.reset.value(7); } //n
 		{ keycode == 109 } { ~km.value_(5); ~vpl.reset.value(8); } //m
 		{ keycode == 44 } { ~kcom.value_(5); ~vpl.reset.value(9); } //,
