@@ -137,3 +137,9 @@ p = Array.new;
 		});
 	});
 };
+
+~csvload.play;
+~averager.play;
+~l_indexer.play; //found in corpus-parse.scd
+~ph_indexer.play;
+~length_indexer.play;

@@ -1,22 +1,14 @@
-//~corpus = "/home/tuckerj/Library/corpi/newest-corp/";
-~corpus = "/home/tuckerj/Library/smaller-corp/";
-
-~viscsgui = NetAddr.new("127.0.0.1", 57120);
-
-Server.default.options.numOutputBusChannels_(4);
-Server.default.options.memSize_(2.pow(20));
-
-(".tools/corpus-parse.scd").loadRelative;
 (".tools/osc-in.scd").loadRelative;
-
 ~startup = r {
 
-	~csvload.play;
-	~averager.play;
-	~l_indexer.play; //found in corpus-parse.scd
-	~ph_indexer.play;
-	~length_indexer.play;
+	~corpus = "/home/tuckerj/Library/corpi/newest-corp/";
+	//~corpus = "/home/tuckerj/Library/smaller-corp/";
 
+	~viscsgui = NetAddr.new("127.0.0.1", 57120);
+
+	Server.default.options.numOutputBusChannels_(4);
+	Server.default.options.memSize_(2.pow(20));
+	(".tools/corpus-parse.scd").loadRelative;
 	(".tools/bag-functions.scd").loadRelative;
 	(".tools/ambisonics.scd").loadRelative;
 	(".tools/defs.scd").loadRelative;
@@ -29,6 +21,7 @@ Server.default.options.memSize_(2.pow(20));
 		});
 
 		~dsp_out_gate_val = 0;
+
 		~dspgroup = Group.new(s.defaultGroup, \addAfter);
 		~analyzergroup = Group.new(~dspgroup);
 		~verbgroup = Group.new(~analyzergroup, \addAfter);

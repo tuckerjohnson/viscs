@@ -19,7 +19,7 @@
 #  ├── h-loudness/  (loudness of slices of harmonic layer)
 #  ├── loudness/    (loudness of slices)
 #  ├── p-loudness/  (loudness of slices of percusive layer)
-#  ├── tslices/     (transient slices)
+#  ├── nslices/     (novelty slices)
 #  └── wav/         (audio files)
 
 
