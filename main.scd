@@ -1,10 +1,11 @@
 (".tools/osc-in.scd").loadRelative;
 ~startup = r {
 
-	~corpus = "/home/tuckerj/Library/corpi/newest-corp/";
+	~corpus = "/Volumes/SAM-DRIVE/newest-corp/";
+	//~corpus = "/home/tuckerj/Library/corpi/newest-corp/";
 	//~corpus = "/home/tuckerj/Library/smaller-corp/";
 
-	~viscsgui = NetAddr.new("127.0.0.1", 57120);
+	~viscsgui = NetAddr.new("192.168.1.30", 57120);
 
 	Server.default.options.numOutputBusChannels_(4);
 	Server.default.options.memSize_(2.pow(20));
@@ -13,6 +14,7 @@
 	(".tools/ambisonics.scd").loadRelative;
 	(".tools/defs.scd").loadRelative;
 	(".tools/spawners.scd").loadRelative;
+b[
 
 	s.waitForBoot({
 
