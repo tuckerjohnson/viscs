@@ -8,7 +8,7 @@ x = { arg inval; var spos, epos, hilo; //handles creating new synths.
 				{ "nilval".postln },
 				{
 					(inval.asString ++ ": " ++ spos ++ " -> " ++ epos ++ " \n").post;
-					Synth.new(\p, [
+					Synth.new(\samplePlay, [
 						\buf, inval[0],
 						\start, spos.asInteger, \end, epos.asInteger,
 						\out, ~instbus, \mout, ~instdspbus,
@@ -43,3 +43,18 @@ x = { arg inval; var spos, epos, hilo; //handles creating new synths.
 		});
 	});").interpret
 };
+
+~diatonicPluckMaker = {
+	arg val;
+	var newPitches;
+	newPitches = Scale.major.degrees.drop(1).scramble.keep(2) + val[0];
+	Synth.new(\pluckChord,
+		[
+			\midiPitch, val[0],
+			\arpeggio, val[1],
+			\pitchA, newPitches[0],
+			\pitchB, newPitches[1]
+		]
+	);
+}
+

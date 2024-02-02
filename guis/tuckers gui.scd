@@ -442,8 +442,8 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 108 } { ~kl.value_(5); ~vpl.reset.value(4); } //l
 		{ keycode == 59 } { ~ksc.value_(5); ~vpl.reset.value(5); } //;
 		{ keycode == 39 } { ~kap.value_(5); ~vpl.reset.value(6); } //'
-		{ keycode == 65293 } { ~kret.value_(1); } //return
-		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
+		{ keycode == 65293 } { ~kret.value_(1); ~vpl.reset.value(20); } //return
+		{ keycode == 65505 } { ~klsh.value_(3);  } //lsift
 		{ keycode == 122 } { ~switch.reset.value(8);} //z
 		{ keycode == 120 } { ~switch.reset.value(9);} //x
 		{ keycode == 99 } { ~switch.reset.value(10);} //c
@@ -585,7 +585,7 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 108 } { ~kl.value_(5); ~vpl.reset.value(4); } //l
 		{ keycode == 59 } { ~ksc.value_(5); ~vpl.reset.value(5); } //;
 		{ keycode == 39 } { ~kap.value_(5); ~vpl.reset.value(6); } //'
-		{ keycode == 65293 } { ~kret.value_(1); } //return
+		{ keycode == 65293 } { ~kret.value_(1); ~vpl.reset.value(20); } //return
 		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
 		{ keycode == 122 } { ~switch.reset.value(8);} //z
 		{ keycode == 120 } { ~switch.reset.value(9);} //x
@@ -728,7 +728,7 @@ OSCdef.new(\bag, { arg msg;
 		{ keycode == 108 } { ~kl.value_(5); ~vpl.reset.value(4); } //l
 		{ keycode == 59 } { ~ksc.value_(5); ~vpl.reset.value(5); } //;
 		{ keycode == 39 } { ~kap.value_(5); ~vpl.reset.value(6); } //'
-		{ keycode == 65293 } { ~kret.value_(1); } //return
+		{ keycode == 65293 } { ~kret.value_(1); ~vpl.reset.value(20); } //return
 		{ keycode == 65505 } { ~klsh.value_(3); } //lsift
 		{ keycode == 122 } { ~switch.reset.value(8);} //z
 		{ keycode == 120 } { ~switch.reset.value(9);} //x

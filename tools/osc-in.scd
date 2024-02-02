@@ -34,6 +34,7 @@ OSCdef.new(\viscspl, {
 	{ msg[1] == 9 } { ~n.value(8) }
 	{ msg[1] == 10 } { ~n.value(13) }
 	{ msg[1] == 11 } { ~n.value(21) }
+	{ msg[1] == 20 } { ~diatonicPluckMaker.value([~currentPitch, exprand(0.08, 1.8)]) }
 	{ msg[1] == 401 } { ~am1 = 1; ~ambisonic_panstate.reset.play; }
 	{ msg[1] == 402 } { ~am2 = 1; ~ambisonic_panstate.reset.play; }
 	{ msg[1] == 403 } { ~am3 = 1; ~ambisonic_panstate.reset.play; }
@@ -44,6 +45,7 @@ OSCdef.new(\viscspl, {
 	{ msg[1] == 408 } { ~am4 = 0; ~ambisonic_panstate.reset.play; }
 	};, '/play'
 );
+
 OSCdef.new(\viscssel, {
 	arg msg;
 	case
