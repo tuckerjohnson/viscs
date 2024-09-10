@@ -6,12 +6,12 @@
 
 	~viscsgui = NetAddr.new("127.0.0.1", 57120);
 
-	Server.default.options.numOutputBusChannels_(4);
-	Server.default.options.memSize_(2.pow(20));
+	Server.default.options.numOutputBusChannels_(12);
+	Server.default.options.memSize = 2.pow(20);
+    Server.default.options.numWireBufs = 2.pow(9);
 	("tools/corpus-parse.scd").loadRelative;
 	("tools/bag-functions.scd").loadRelative;
-	("tools/ambisonics.scd").loadRelative;
-	("tools/defs.scd").loadRelative;
+	("tools/synthDefinitions.scd").loadRelative;
 	("tools/spawners.scd").loadRelative;
 
 	s.waitForBoot({
@@ -38,7 +38,7 @@
 		~outbus = Bus.audio(s, 3);
 
 		~microphone = Synth.new(\microphone, [\out, ~todspbus], s.defaultGroup, \addBefore);
-		~pitchDesciption = Synth.new(\pitchDescriptor, [\in, 0], ~dspgroup);
+		~pitchDesciption = Synth.new(\pitchDescriptor, [\in, ~todspbus], ~dspgroup);
 		~compressor = Synth.new(\compressor, [\in, ~todspbus, \out, ~toanalysisbus, \out2, ~todiroutbus, \thresh, 0.6, \ratio, 3], ~dspgroup);
 		//~dirout = Synth.new(\channelStrip, [\in, ~todiroutbus, \out, 0, \mul, 0.6], ~dspgroup, \addAfter);
 		~instgate = Synth.new(\gateFirstOrder, [\in, ~instbus, \out, ~outbus], ~dspgroup, \addBefore);
@@ -65,9 +65,3 @@
 	});
 
 };
-
-//{(NTube.ar(Mix.new([SoundIn.ar*2, (PinkNoise.ar*SinOsc.ar(0.25)*0.1)]),
-//	`[0.97,1.0,1.0,1.0,1.0,MouseY.kr(-1.0,1.0)],
-//	`[0.5,MouseY.kr(-1.0,1.0),0.2,-0.4],
-//	`([0.01,0.02,0.01,0.005,0.05]*MouseX.kr(0.001,1.0,'exponential'))
-//)*0.1).dup}.play

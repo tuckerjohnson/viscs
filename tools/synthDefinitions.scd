@@ -1,5 +1,4 @@
-SynthDef.new(
-	\samplePlay,
+SynthDef.new(\hoa_samplePlayer,
 	{
 		arg amp=0.2, out, mout, plo=(-1.0), phi=1.0, buf, start, end;
 		var bsr ,dur, env, sig, ptr, w, x, y;
@@ -14,7 +13,7 @@ SynthDef.new(
 	}
 ).add;
 
-SynthDef("pitchDescriptor",
+SynthDef(\pitchDescriptor,
 	{
 		arg in, windowSize = 4096;
 		var sig, freq, conf, latency, env, newSig;
@@ -25,7 +24,7 @@ SynthDef("pitchDescriptor",
 	}
 ).add;
 
-SynthDef("pluckChord",
+SynthDef(\pluckChord,
 	{
 		arg midiPitch, out = 0, arpeggio = 1, pitchA, pitchB;
 		var signal;
@@ -61,7 +60,7 @@ SynthDef.new(\gateFirstOrder, {
 }).add;
 
 SynthDef.new(\gate, {
-	arg in, out, gate, fade=0.5;
+	arg in, out, gate, fade=1;
 	var sig;
 	sig = In.ar(in) * EnvGate.new(0, gate, fade, 0);
 	Out.ar(out, sig);
@@ -115,11 +114,11 @@ SynthDef.new(\bmake, {
 }).add;
 
 SynthDef.new(\compressor, {
-	arg in, out, out2, thresh, ratio, clamp=0.01, relax=0.5;
+	arg in, out, out2, threshhold, ratio, clamp=0.01, relax=0.5;
 	var sig;
 	ratio = ratio.reciprocal;
 	sig = In.ar(in);
-	sig = Compander.ar(sig, sig, thresh, 1, ratio, clamp, relax);
+	sig = Compander.ar(sig, sig, threshhold, 1, ratio, clamp, relax);
 	Out.ar(out, sig);
 	Out.ar(out2, sig);
 }).add;
@@ -129,4 +128,12 @@ SynthDef.new(\channelStrip, {
 	var sig;
 	sig = In.ar(in);
 	Out.ar(out, Pan2.ar(sig, 0, mul));
+}).add;
+
+SynthDef.new(\freqShifter, {
+	arg freq, amp=1, gate=1;
+	var sig, env;
+	env = EnvGen.kr(Env.asr(0.01, amp, 2), gate, doneAction:2);
+	sig = FreqShift.ar(SoundIn.ar(8, 0.5), freq).dup * env;
+	Out.ar(0, sig);
 }).add;
