@@ -1,67 +1,101 @@
 ("tools/osc-in.scd").loadRelative;
 ~startup = r {
 
-	//~corpus = "/home/tuckerj/Documents/audioLib/saxophone-sample/";
-	~corpus = "/home/tuckerj/Documents/audioLib/cur-corp/";
+    //~corpus = "/home/tuckerj/Documents/audioLib/saxophone-sample/";
+    ~corpus = "/home/tuckerj/Documents/REAPER Media/sound libraries/Sound Lib 20240425/";
 
-	~viscsgui = NetAddr.new("127.0.0.1", 57120);
+    ~viscsgui = NetAddr.new("127.0.0.1", 57120);
 
-	Server.default.options.numOutputBusChannels_(12);
-	Server.default.options.memSize = 2.pow(20);
+    Server.default.options.numOutputBusChannels_(12);
+    Server.default.options.memSize = 2.pow(20);
     Server.default.options.numWireBufs = 2.pow(9);
-	("tools/corpus-parse.scd").loadRelative;
-	("tools/bag-functions.scd").loadRelative;
-	("tools/synthDefinitions.scd").loadRelative;
-	("tools/spawners.scd").loadRelative;
+    ("tools/corpus-parse.scd").loadRelative;
+    ("tools/bag-functions.scd").loadRelative;
+    ("tools/synthDefinitions.scd").loadRelative;
+    ("tools/spawners.scd").loadRelative;
 
-	s.waitForBoot({
+    s.waitForBoot({
 
-		PathName(~corpus++"wav/").entries.do({ arg path, i;
-			b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
-		});
+        PathName(~corpus++"wav/").entries.do({ arg path, i;
+            b = b.add(Buffer.readChannel(s, path.fullPath, 0, -1, 0));
+        });
 
-		~dsp_out_gate_val = 0;
-		~currentPitch = 60;
+        ~dsp_out_gate_val = 0;
+        ~currentPitch = 60;
 
-		~dspgroup = Group.new(s.defaultGroup, \addAfter);
-		~analyzergroup = Group.new(~dspgroup);
-		~verbgroup = Group.new(~analyzergroup, \addAfter);
+        ~inputGroup = Group.new(s.defaultGroup, \addBefore);
+        ~outputGroup = Group.new(s.defaultGroup, \addAfter);
+        ~effectsGroup = Group.new(~outputGroup, \addBefore);
+        ~effectsManagementGroup = Group.new(~effectsGroup, \addBefore);
+        ~analysisGroup = Group.new(~effectsManagementGroup, \addBefore);
+        ~sourceManagementGroup = Group.new(~analysisGroup, \addBefore);
 
-		~todspbus = Bus.audio(s, 1);
-		~toanalysisbus = Bus.audio(s, 1);
-		~todiroutbus = Bus.audio(s, 1);
-		~instdspbus = Bus.audio(s, 1);
-		~instbus = Bus.audio(s, 3);
-		~verbbus = Bus.audio(s, 1);
-		~toverbbus = Bus.audio(s, 1);
-		~dspbus = Bus.audio(s, 1);
-		~outbus = Bus.audio(s, 3);
+        ~toManagementBus = Bus.audio(s, 1);
+        ~toAnalysisBus = Bus.audio(s, 1);
+        ~sineBus = Bus.audio(s, 1);
+        ~sineToEffectsBus = Bus.audio(s, 1);
+        ~toSingleSBBus = Bus.audio(s, 1);
+        ~singleSBToConvBus = Bus.audio(s, 1);
+        ~sampleBus = Bus.audio(s, 3);
+        ~effectsBus = Bus.audio(s, 1);
+        ~outBus = Bus.audio(s, 3);
 
-		~microphone = Synth.new(\microphone, [\out, ~todspbus], s.defaultGroup, \addBefore);
-		~pitchDesciption = Synth.new(\pitchDescriptor, [\in, ~todspbus], ~dspgroup);
-		~compressor = Synth.new(\compressor, [\in, ~todspbus, \out, ~toanalysisbus, \out2, ~todiroutbus, \thresh, 0.6, \ratio, 3], ~dspgroup);
-		//~dirout = Synth.new(\channelStrip, [\in, ~todiroutbus, \out, 0, \mul, 0.6], ~dspgroup, \addAfter);
-		~instgate = Synth.new(\gateFirstOrder, [\in, ~instbus, \out, ~outbus], ~dspgroup, \addBefore);
-		~instdspgate = Synth.new(\gate, [\in, ~instdspbus, \out, ~toanalysisbus], ~dspgroup, \addBefore);
-		~analyzer = Synth.new(\fluidSines, [\in, ~toanalysisbus, \out, ~verbbus], ~analyzergroup);
-		~preverbgate = Synth.new(\gate, [\in, ~verbbus, \out, ~toverbbus], ~analyzergroup, \addAfter);
-		~verber = Synth.new(\reverb, [\in, ~toverbbus, \out, ~dspbus], ~verbgroup);
-		~dspb = Synth.new(\bmake, [\in, ~dspbus, \out, ~outbus], ~dspgroup, \addToTail);
-		~decoder = Synth.new(\decoderFirstOrder, [\in, ~outbus], ~dspgroup, \addAfter);
+        ~microphone = Synth.new(\microphone, [\out, ~toManagementBus], ~inputGroup);
+        ~pitchDesciption = Synth.new(\pitchDescriptor, [\in, ~toManagementBus], ~analysisGroup);
+        ~compressor = Synth.new(\compressor, [\in, ~toManagementBus, \out, ~toAnalysisBus, \out2, ~toSingleSBBus, \thresh, 0.6, \ratio, 3], ~sourceManagementGroup);
+        //~dirout = Synth.new(\channelStrip, [\in, ~todiroutbus, \out, 0, \mul, 0.6], ~dspgroup, \addAfter);
+        ~instgate = Synth.new(\gateFirstOrder, [\in, ~sampleBus, \out, ~outBus], ~sourceManagementGroup);
+        ~analyzer = Synth.new(\fluidSines, [\in, ~toAnalysisBus, \out, ~sineBus], ~analysisGroup);
+        ~preverbgate = Synth.new(\gate, [\in, ~sineBus, \out, ~sineToEffectsBus], ~effectsManagementGroup);
+        ~verber = Synth.new(\reverb, [\in, ~sineToEffectsBus, \out, ~effectsBus], ~effectsGroup);
+        ~dspb = Synth.new(\bmake, [\in, ~effectsBus, \out, ~outBus], ~outputGroup, \addToHead);
+        ~decoder = Synth.new(\decoderFirstOrder, [\in, ~outBus], ~outputGroup, \addToTail);
 
-		OSCFunc(
-			{
-				arg msg;
-				if (msg[4] > 0.9) {
-					~currentPitch = msg[3];
-					//msg[3].round(0.01).postln;
-				} {
-					~nib = nil;
-				};
-			},
-			"/pitchDescriptor"
-		);
+        OSCFunc(
+            {
+                arg msg;
+                if (msg[4] > 0.9) {
+                    ~currentPitch = msg[3];
+                    //msg[3].round(0.01).postln;
+                } {
+                    ~nib = nil;
+                };
+            },
+            "/pitchDescriptor"
+        );
 
-	});
+    });
 
 };
+
+~startup.run;
+
+
+s.plotTree;
+
+(
+var notes, on, off;
+MIDIClient.init;
+MIDIIn.connectAll;
+
+notes = Array.newClear(128);    // array has one slot per possible MIDI note
+
+on = MIDIFunc.noteOn({ |veloc, num, chan, src|
+    if( chan == 3,
+		{
+            notes[num] = Synth(\freqShifter, [\pitch, num.midicps, \out, ~effectsBus], ~analysisGroup);
+            num.postln;
+        },
+		{ ~nib = nil }
+	);
+});
+
+off = MIDIFunc.noteOff({ |veloc, num, chan, src|
+    if( chan == 3,
+		{ notes[num].set(\gate,0); notes[num].release; },
+		{ ~nib = nil }
+	);
+});
+
+q = { on.free; off.free; };
+)

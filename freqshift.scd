@@ -1,6 +1,6 @@
 s.boot;
-s.meter;
 s.plotTree;
+s.meter;
 s.freeAll;
 s.quit;
 

@@ -131,9 +131,9 @@ SynthDef.new(\channelStrip, {
 }).add;
 
 SynthDef.new(\freqShifter, {
-	arg freq, amp=1, gate=1;
+	arg freq, amp=1, gate=1, out;
 	var sig, env;
 	env = EnvGen.kr(Env.asr(0.01, amp, 2), gate, doneAction:2);
 	sig = FreqShift.ar(SoundIn.ar(8, 0.5), freq).dup * env;
-	Out.ar(0, sig);
+	Out.ar(out, sig);
 }).add;

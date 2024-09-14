@@ -11,7 +11,7 @@
 					Synth.new(\hoa_samplePlayer, [
 						\buf, inval[0],
 						\start, spos.asInteger, \end, epos.asInteger,
-						\out, ~instbus, \mout, ~instdspbus,
+						\out, ~sampleBus, \mout, 800,
 						\plo, ~hilo[1], \phi, ~hilo[0]]);
 				}
 			);
