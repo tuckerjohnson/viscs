@@ -2,7 +2,7 @@
 ~startup = r {
 
     //~corpus = "/home/tuckerj/Documents/audioLib/saxophone-sample/";
-    ~corpus = "/home/tuckerj/Documents/REAPER Media/sound libraries/Sound Lib 20240425/";
+    ~corpus = "/home/tuckerj/Documents/REAPER Media/soundLibraries/Sound Lib 20240425/";
 
     ~viscsgui = NetAddr.new("127.0.0.1", 57120);
 
